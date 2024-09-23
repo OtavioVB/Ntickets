@@ -12,23 +12,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{99CFE9C5-6
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.WebApi", "src\Ntickets.WebApi\Ntickets.WebApi.csproj", "{7A2DEEDE-04F5-4038-8027-9C75CB6554E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.WebApi", "src\Ntickets.WebApi\Ntickets.WebApi.csproj", "{7A2DEEDE-04F5-4038-8027-9C75CB6554E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.Domain", "src\Ntickets.Domain\Ntickets.Domain.csproj", "{8828E27E-E146-4E38-862B-7AC43C55D5F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.Domain", "src\Ntickets.Domain\Ntickets.Domain.csproj", "{8828E27E-E146-4E38-862B-7AC43C55D5F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.Application", "src\Ntickets.Application\Ntickets.Application.csproj", "{9AA08D29-16D8-47D2-B58E-D0BDE0FBBE23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.Application", "src\Ntickets.Application\Ntickets.Application.csproj", "{9AA08D29-16D8-47D2-B58E-D0BDE0FBBE23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.Infrascructure", "src\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj", "{E80B1B9A-9C84-4630-9A3D-AF0BD063BA7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.Infrascructure", "src\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj", "{E80B1B9A-9C84-4630-9A3D-AF0BD063BA7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.MethodResultsContext", "libs\Ntickets.BuildingBlocks.MethodResultsContext\Ntickets.BuildingBlocks.MethodResultsContext.csproj", "{F4166898-DAF1-499D-A170-3B8C00D1DCAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.MethodResultsContext", "libs\Ntickets.BuildingBlocks.MethodResultsContext\Ntickets.BuildingBlocks.MethodResultsContext.csproj", "{F4166898-DAF1-499D-A170-3B8C00D1DCAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.NotificationContext", "libs\Ntickets.BuildingBlocks.NotificationContext\Ntickets.BuildingBlocks.NotificationContext.csproj", "{B9529314-F0D7-41F2-BABD-AAD44BEFEB3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.NotificationContext", "libs\Ntickets.BuildingBlocks.NotificationContext\Ntickets.BuildingBlocks.NotificationContext.csproj", "{B9529314-F0D7-41F2-BABD-AAD44BEFEB3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.UnitTests", "tsts\unit\Ntickets.UnitTests\Ntickets.UnitTests.csproj", "{6115129A-940F-4410-846D-113D7A2BEB3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.UnitTests", "tsts\unit\Ntickets.UnitTests\Ntickets.UnitTests.csproj", "{6115129A-940F-4410-846D-113D7A2BEB3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.IntegrationTests", "tsts\integration\Ntickets.IntegrationTests\Ntickets.IntegrationTests.csproj", "{A1140132-34E6-4E0F-B272-4FBD470A82A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.IntegrationTests", "tsts\integration\Ntickets.IntegrationTests\Ntickets.IntegrationTests.csproj", "{A1140132-34E6-4E0F-B272-4FBD470A82A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.EventContext", "libs\Ntickets.BuildingBlocks.EventContext\Ntickets.BuildingBlocks.EventContext.csproj", "{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,10 @@ Global
 		{A1140132-34E6-4E0F-B272-4FBD470A82A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1140132-34E6-4E0F-B272-4FBD470A82A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1140132-34E6-4E0F-B272-4FBD470A82A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{B9529314-F0D7-41F2-BABD-AAD44BEFEB3C} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 		{6115129A-940F-4410-846D-113D7A2BEB3D} = {1CD7D9BE-6327-4100-A5A9-19F990057DED}
 		{A1140132-34E6-4E0F-B272-4FBD470A82A2} = {1CD7D9BE-6327-4100-A5A9-19F990057DED}
+		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {152FAC3D-1AF3-4FAB-BF94-CA91A3091897}
