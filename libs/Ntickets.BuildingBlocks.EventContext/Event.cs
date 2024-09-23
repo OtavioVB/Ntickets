@@ -1,4 +1,6 @@
 ﻿using Ntickets.BuildingBlocks.EventContext.Interfaces;
+using System.Text;
+using System.Text.Json;
 
 namespace Ntickets.BuildingBlocks.EventContext;
 
@@ -38,4 +40,7 @@ public class Event<TDescriptor> : IEvent<TDescriptor>
             descriptor: descriptor,
             eventTimestamp: eventTimestamp);
     }
+
+    public string GetEventSerialized()
+        => JsonSerializer.Serialize(this);
 }
