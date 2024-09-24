@@ -1,4 +1,5 @@
 ﻿using Ntickets.Domain.BoundedContexts.TenantContext.Enumerators;
+using Ntickets.Domain.ValueObjects;
 
 namespace Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 
