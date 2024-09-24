@@ -59,6 +59,9 @@ public readonly struct IdValueObject
     public string GetIdAsString()
         => GetId().ToString();
 
+    public MethodResult<INotification> GetMethodResult()
+        => MethodResult;
+
     public static implicit operator IdValueObject(Ulid id)
         => Factory(id);
     public static implicit operator string(IdValueObject obj)
@@ -67,4 +70,6 @@ public readonly struct IdValueObject
         => obj.GetId();
     public static implicit operator IdValueObject(string id)
         => Factory(Ulid.Parse(id));
+    public static implicit operator MethodResult<INotification>(IdValueObject obj)
+        => obj.GetMethodResult();
 }

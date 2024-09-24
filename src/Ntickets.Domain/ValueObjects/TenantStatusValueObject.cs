@@ -64,6 +64,9 @@ public readonly struct TenantStatusValueObject
     public string GetTenantStatusAsString()
         => GetTenantStatus().ToString();
 
+    public MethodResult<INotification> GetMethodResult()
+        => MethodResult;
+
     public static implicit operator string(TenantStatusValueObject obj)
         => obj.GetTenantStatusAsString();
     public static implicit operator EnumTenantStatus(TenantStatusValueObject obj)
@@ -72,4 +75,6 @@ public readonly struct TenantStatusValueObject
         => Factory(obj);
     public static implicit operator TenantStatusValueObject(EnumTenantStatus obj)
         => Factory(obj);
+    public static implicit operator MethodResult<INotification>(TenantStatusValueObject obj)
+        => obj.GetMethodResult();
 }
