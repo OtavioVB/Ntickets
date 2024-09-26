@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
@@ -11,6 +12,6 @@ public sealed class TenantRepository : BaseRepository<Tenant>, IExtensionTenantR
     {
     }
 
-    public Task<bool> VerifyTenantExistsByDocumentAsync(string document, CancellationToken cancellationToken)
+    public Task<bool> VerifyTenantExistsByDocumentAsync(string document, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
         => _dataContext.Set<Tenant>().AsNoTracking().Where(p => p.Document == document).AnyAsync(cancellationToken);
 }
