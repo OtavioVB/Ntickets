@@ -12,8 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Base\" />
-    <Folder Include="Controllers\TenantContext\" />
+    <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj" />
   </ItemGroup>
 
 </Project>

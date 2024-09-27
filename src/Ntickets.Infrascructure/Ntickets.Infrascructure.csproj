@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj" />
+    <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj" />
     <ProjectReference Include="..\Ntickets.Domain\Ntickets.Domain.csproj" />
   </ItemGroup>
 

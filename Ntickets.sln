@@ -32,7 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.IntegrationTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.EventContext", "libs\Ntickets.BuildingBlocks.EventContext\Ntickets.BuildingBlocks.EventContext.csproj", "{7BA14BDE-A63F-4A83-AAE3-32A853C56C17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.AuditableInfoContext", "libs\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj", "{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.AuditableInfoContext", "libs\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj", "{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.ObservabilityContext", "libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj", "{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +101,7 @@ Global
 		{A1140132-34E6-4E0F-B272-4FBD470A82A2} = {1CD7D9BE-6327-4100-A5A9-19F990057DED}
 		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 		{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
+		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {152FAC3D-1AF3-4FAB-BF94-CA91A3091897}
