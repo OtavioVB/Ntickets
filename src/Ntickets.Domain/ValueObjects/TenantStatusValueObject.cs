@@ -23,6 +23,8 @@ public readonly struct TenantStatusValueObject
     private const string ENUM_TENANT_STATUS_IS_NOT_DEFINED_NOTIFICATION_CODE = "ENUM_TENANT_STATUS_IS_NOT_DEFINED";
     private const string ENUM_TENANT_STATUS_IS_NOT_DEFINED_NOTIFICATION_MESSAGE = "O enumerador do status do tenant precisa ser um suportado pela plataforma.";
 
+    public static TenantStatusValueObject PENDING_ANALYSIS => TenantStatusValueObject.Factory(EnumTenantStatus.PENDING_ANALYSIS);
+
     public static TenantStatusValueObject Factory(EnumTenantStatus status)
     {
         const int MAX_POSSIBLE_NOTIFICATIONS = 2;

@@ -28,4 +28,8 @@ public sealed record Tenant
         Status = status;
         LastModifiedAt = lastModifiedAt;
     }
+
+    public static Tenant Create(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, DocumentValueObject document, EmailValueObject email,
+        PhoneValueObject phone)
+        => new(IdValueObject.Factory(), DateTimeValueObject.Factory(), fantasyName, legalName, document, email, phone, TenantStatusValueObject.PENDING_ANALYSIS, DateTimeValueObject.Factory());
 }

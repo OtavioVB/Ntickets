@@ -1,8 +1,11 @@
-﻿using Ntickets.Domain.ValueObjects;
+﻿using Ntickets.Application.Services.Base.Inputs;
+using Ntickets.BuildingBlocks.MethodResultsContext;
+using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
+using Ntickets.Domain.ValueObjects;
 
 namespace Ntickets.Application.Services.TenantContext.Inputs;
 
-public readonly struct CreateTenantServiceInput
+public readonly struct CreateTenantServiceInput : IServiceInput
 {
     public FantasyNameValueObject FantasyName { get; }
     public LegalNameValueObject LegalName { get; }
@@ -22,4 +25,7 @@ public readonly struct CreateTenantServiceInput
     public static CreateTenantServiceInput Factory(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, EmailValueObject email, PhoneValueObject phone,
         DocumentValueObject document)
         => new(fantasyName, legalName, email, phone, document);
+
+    public MethodResult<INotification> GetInputValidation()
+        => MethodResult<INotification>.Factory(FantasyName, LegalName, Email, Phone, Document);
 }

@@ -3,6 +3,7 @@ using Ntickets.Application.Services.TenantContext.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 
 namespace Ntickets.Application.Services.TenantContext.Interfaces;
 
