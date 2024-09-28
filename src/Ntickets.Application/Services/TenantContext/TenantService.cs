@@ -75,6 +75,8 @@ public sealed class TenantService : ITenantService
                     auditableInfo: auditableInfo,
                     cancellationToken: cancellationToken);
 
+                await _unitOfWork.ApplyDataContextTransactionChangeAsync(auditableInfo, cancellationToken);
+
                 const string CREATE_TENANT_HAS_BEEN_EXECUTED_SUCCESSFULL_NOTIFICATION_CODE = "CREATE_TENANT_HAS_BEEN_EXECUTED_SUCCESSFULL";
                 const string CREATE_TENANT_HAS_BEEN_EXECUTED_SUCCESSFULL_NOTIFICATION_MESSAGE = "A criação do whitelabel foi executada com sucesso.";
 
