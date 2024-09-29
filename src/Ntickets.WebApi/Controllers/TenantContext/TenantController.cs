@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ntickets.Application.UseCases.Base;
+using Ntickets.Application.UseCases.CreateTenant.Inputs;
+using Ntickets.Application.UseCases.CreateTenant.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.WebApi.Controllers.Base;
 using Ntickets.WebApi.Controllers.TenantContext.Payloads;
+using Ntickets.WebApi.Controllers.TenantContext.Sendloads;
 using System.Diagnostics;
 using System.Net.Mime;
 
@@ -22,6 +26,7 @@ public sealed class TenantController : CustomizedControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [AllowAnonymous]
     public Task<IActionResult> HttpPostCreateTenantAsync(
+        [FromServices] IUseCase<CreateTenantUseCaseInput, CreateTenantUseCaseOutput> useCase,
         [FromHeader(Name = CORRELATION_ID_HEADER_KEY)] string correlationId,
         [FromBody] CreateTenantPayloadInput input,
         CancellationToken cancellationToken)
@@ -33,9 +38,36 @@ public sealed class TenantController : CustomizedControllerBase
             traceName: $"{nameof(TenantController)}.{nameof(HttpPostCreateTenantAsync)}",
             activityKind: ActivityKind.Server,
             input: input,
-            handler: (input, auditableInfo, activity, cancellationToken) =>
+            handler: async (input, auditableInfo, activity, cancellationToken) =>
             {
-                return Task.FromResult((IActionResult)Ok());
+                var useCaseResult = await useCase.ExecuteUseCaseAsync(
+                    input: CreateTenantUseCaseInput.Factory(
+                        fantasyName: input.FantasyName,
+                        legalName: input.LegalName,
+                        email: input.Email,
+                        phone: input.Phone,
+                        document: input.Document),
+                    auditableInfo: auditableInfo,
+                    cancellationToken: cancellationToken);
+
+                if (useCaseResult.IsError)
+                    return (IActionResult)StatusCode(
+                        statusCode: StatusCodes.Status400BadRequest,
+                        value: useCaseResult.Notifications);
+
+                return StatusCode(
+                    statusCode: StatusCodes.Status201Created,
+                    value: CreateTenantSendloadOutput.Factory(
+                        tenantId: useCaseResult.Output.TenantId,
+                        createdAt: useCaseResult.Output.CreatedAt,
+                        status: useCaseResult.Output.Status,
+                        fantasyName: useCaseResult.Output.FantasyName,
+                        legalName: useCaseResult.Output.LegalName,
+                        document: useCaseResult.Output.Document,
+                        email: useCaseResult.Output.Email,
+                        phone: useCaseResult.Output.Phone,
+                        lastModifiedAt: useCaseResult.Output.LastModifiedAt,
+                        notifications: useCaseResult.Notifications));
             },
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,

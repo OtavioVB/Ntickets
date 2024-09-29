@@ -13,6 +13,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj" />
+    <ProjectReference Include="..\Ntickets.Application\Ntickets.Application.csproj" />
+    <ProjectReference Include="..\Ntickets.Domain\Ntickets.Domain.csproj" />
+    <ProjectReference Include="..\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ public readonly struct CreateTenantUseCaseInput
     public PhoneValueObject Phone { get; }
     public DocumentValueObject Document { get; }
 
-    private CreateTenantUseCase(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, EmailValueObject email, PhoneValueObject phone, DocumentValueObject document)
+    private CreateTenantUseCaseInput(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, EmailValueObject email, PhoneValueObject phone, DocumentValueObject document)
     {
         FantasyName = fantasyName;
         LegalName = legalName;
@@ -22,7 +22,7 @@ public readonly struct CreateTenantUseCaseInput
         Document = document;
     }
 
-    public static CreateTenantUseCase Factory(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, EmailValueObject email, PhoneValueObject phone,
+    public static CreateTenantUseCaseInput Factory(FantasyNameValueObject fantasyName, LegalNameValueObject legalName, EmailValueObject email, PhoneValueObject phone,
         DocumentValueObject document)
         => new(fantasyName, legalName, email, phone, document);
 }

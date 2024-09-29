@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.EventContext\Ntickets.BuildingBlocks.EventContext.csproj" />
     <ProjectReference Include="..\Ntickets.Domain\Ntickets.Domain.csproj" />
     <ProjectReference Include="..\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
   </ItemGroup>

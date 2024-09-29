@@ -3,6 +3,7 @@ using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.EventContext.Builders;
 using Ntickets.BuildingBlocks.EventContext.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Utils;
 using Ntickets.Domain.BoundedContexts.EventContext.Events;
 using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Domain.ValueObjects;
@@ -50,5 +51,15 @@ public sealed class CreateTenantEventService : EventBaseService<CreateTenantEven
                 }, cancellationToken),
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
-            keyValuePairs: []);
+            keyValuePairs: [
+                KeyValuePair.Create(
+                    key: TraceNames.EVENT_NAME,
+                    value: EventName),
+                KeyValuePair.Create(
+                    key: TraceNames.RABBITMQ_MESSENGER_EXCHANGE_NAME,
+                    value: CREATE_TENANT_EVENT_SERVICE_EXCHANGE_NAME),
+                KeyValuePair.Create(
+                    key: TraceNames.RABBITMQ_MESSENGER_ROUTING_KEY,
+                    value: CREATE_TENANT_EVENT_SERVICE_ROUTING_KEY)
+                ]);
 }

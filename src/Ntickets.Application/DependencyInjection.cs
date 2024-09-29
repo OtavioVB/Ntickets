@@ -1,6 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Ntickets.Application.Events.Base.Interfaces;
+using Ntickets.Application.Events.TenantContext;
 using Ntickets.Application.Services.TenantContext;
 using Ntickets.Application.Services.TenantContext.Interfaces;
+using Ntickets.Application.UseCases.Base;
+using Ntickets.Application.UseCases.CreateTenant;
+using Ntickets.Application.UseCases.CreateTenant.Inputs;
+using Ntickets.Application.UseCases.CreateTenant.Outputs;
+using Ntickets.Domain.BoundedContexts.EventContext.Events;
 
 namespace Ntickets.Application;
 
@@ -14,9 +21,15 @@ public static class DependencyInjection
 
         #endregion
 
+        #region Event Services Depedencies Configuration
+
+        serviceCollection.AddSingleton<IEventService<CreateTenantEvent>, CreateTenantEventService>();
+
+        #endregion
+
         #region Use Cases Dependencies Configuration
 
-
+        serviceCollection.AddScoped<IUseCase<CreateTenantUseCaseInput, CreateTenantUseCaseOutput>, CreateTenantUseCase>();
 
         #endregion
     }
