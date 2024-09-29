@@ -5,6 +5,8 @@ using Ntickets.Infrascructure.EntityFrameworkCore;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
+using Ntickets.Infrascructure.RabbitMq;
+using Ntickets.Infrascructure.RabbitMq.Interfaces;
 
 namespace Ntickets.Infrascructure;
 
@@ -12,7 +14,12 @@ public static class DependencyInjection
 {
     public static void ApplyInfrascructureDependenciesConfiguration(
         this IServiceCollection serviceCollection,
-        string connectionString)
+        string connectionString,
+        string rabbitMqConnectionUserName, 
+        string rabbitMqConnectionPassword,
+        string rabbitMqConnectionVirtualHost,
+        string rabbitMqConnectionHostName,
+        string rabbitMqConnectionClientProviderName)
     {
         #region Entity Framework Core DbContext Configuration
 
@@ -32,6 +39,18 @@ public static class DependencyInjection
 
         serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>();
         serviceCollection.AddScoped<IExtensionTenantRepository, TenantRepository>();
+
+        #endregion
+
+        #region RabbitMq Connection Configuration
+
+        serviceCollection.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>((serviceProvider)
+            => new RabbitMqPublisher(
+                rabbitMqConnectionUserName: rabbitMqConnectionUserName,
+                rabbitMqConnectionPassword: rabbitMqConnectionPassword,
+                rabbitMqConnectionVirtualHost: rabbitMqConnectionVirtualHost,
+                rabbitMqConnectionHostName: rabbitMqConnectionHostName,
+                rabbitMqConnectionClientProviderName: rabbitMqConnectionClientProviderName));
 
         #endregion
     }
