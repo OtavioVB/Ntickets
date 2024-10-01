@@ -1,0 +1,101 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports: 
+      - 48740:5432
+    environment:
+      POSTGRES_USER: suporte@ntickets.com.br
+      POSTGRES_PASSWORD: ntickets@123
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - ntickets-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    user: root
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "suporte@ntickets.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "ntickets@123"
+    ports:
+      - 48750:80
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - ntickets-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: suporte@ntickets.com.br
+      RABBITMQ_DEFAULT_PASS: ntickets@123
+    ports:
+      - 48760:5672
+      - 48770:15672
+    restart: always
+    networks:
+      - ntickets-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - 48700:16686
+    networks:
+      - ntickets-network
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 48730:9090
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - opentelemetry
+    networks:
+      - ntickets-network
+
+  opentelemetry:
+    image: otel/opentelemetry-collector:0.68.0
+    container_name: opentelemetry
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    ports:
+      - 48720:4317
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    depends_on:
+      - jaeger
+    networks:
+      - ntickets-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      -  GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: unless-stopped
+    ports:
+      - 48710:3000
+    depends_on:
+      - opentelemetry
+      - prometheus
+    networks:
+      - ntickets-network
+
+networks:
+  ntickets-network:
+    name: ntickets-network
+    driver: bridge
+
+volumes:
+  postgresql:
+  postgresql_data:

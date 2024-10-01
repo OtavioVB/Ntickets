@@ -34,7 +34,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.Eve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.AuditableInfoContext", "libs\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj", "{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.ObservabilityContext", "libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj", "{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.ObservabilityContext", "libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj", "{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{D6B72DC6-9B1C-448C-84D5-FED13082DB6D}"
+	ProjectSection(SolutionItems) = preProject
+		devops\local\docker-compose.Local.yaml = devops\local\docker-compose.Local.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
