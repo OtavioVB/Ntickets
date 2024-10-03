@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace Ntickets.BuildingBlocks.ObservabilityContext;
 
@@ -56,6 +59,16 @@ public static class DependencyInjection
                     q.Protocol = OtlpExportProtocol.Grpc;
                 });
             });
+
+        #endregion
+
+        #region Trace Managers Dependencies Configuration
+
+        serviceCollection.AddSingleton<ITraceManager, TraceManager>((serviceProvider)
+            => new TraceManager(
+                activitySource: new ActivitySource(
+                    name: serviceName,
+                    version: serviceVersion)));
 
         #endregion
     }

@@ -24,9 +24,10 @@ public sealed class RabbitMqPublisher : IRabbitMqPublisher
             VirtualHost = rabbitMqConnectionVirtualHost,
             HostName = rabbitMqConnectionHostName,
             ClientProvidedName = rabbitMqConnectionUserName,
+            Port = 5672
         };
 
-        using var connection = rabbitMqConnectionFactory.CreateConnection();
+        var connection = rabbitMqConnectionFactory.CreateConnection();
 
         _channel = connection.CreateModel();
     }

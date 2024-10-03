@@ -21,6 +21,7 @@ public sealed class CreateTenantEventService : EventBaseService<CreateTenantEven
 
     private const string CREATE_TENANT_EVENT_SERVICE_ROUTING_KEY = "ntickets.tenants.create.*";
     private const string CREATE_TENANT_EVENT_SERVICE_EXCHANGE_NAME = "ntickets.tenants";
+    private const string CREATE_TENANT_EVENT_SERVICE_QUEUE_NAME_RECEIVER = "ntickets.tenants.create";
 
     protected override string EventName => "NTICKETS_TENANT_CREATED";
 
@@ -42,7 +43,15 @@ public sealed class CreateTenantEventService : EventBaseService<CreateTenantEven
 
                     _rabbitMqPublisher.ExchangeDeclare(
                         exchangeName: CREATE_TENANT_EVENT_SERVICE_EXCHANGE_NAME,
-                        exchangeType: EnumExchangeType.Topic);
+                        exchangeType: EnumExchangeType.topic);
+
+                    _rabbitMqPublisher.QueueDeclare(
+                        queueName: CREATE_TENANT_EVENT_SERVICE_QUEUE_NAME_RECEIVER);
+
+                    _rabbitMqPublisher.QueueBind(
+                        queueName: CREATE_TENANT_EVENT_SERVICE_QUEUE_NAME_RECEIVER,
+                        exchangeName: CREATE_TENANT_EVENT_SERVICE_EXCHANGE_NAME,
+                        routingKey: CREATE_TENANT_EVENT_SERVICE_ROUTING_KEY);
 
                     _rabbitMqPublisher.PublishMessage(
                         exchangeName: CREATE_TENANT_EVENT_SERVICE_EXCHANGE_NAME,

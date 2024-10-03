@@ -1,5 +1,9 @@
 # Ntickets
 
+## Acessos Rápidos
+- [Status da API](https://ntickets.statuspage.io/)
+- [Documentação de API](https://ntickets.readme.io/reference/)
+
 ## Tecnologias Utilizadas
 - [Docker/Docker-Compose](https://docs.docker.com/)
 - [.NET 8/ASP.NET Core 8](https://learn.microsoft.com/pt-br/aspnet/core/?view=aspnetcore-8.0)
