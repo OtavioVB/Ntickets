@@ -3,6 +3,7 @@
 ## Acessos Rápidos
 - [Status da API](https://ntickets.statuspage.io/)
 - [Documentação de API](https://ntickets.readme.io/reference/)
+- [Análise Estática do Código](https://sonarcloud.io/summary/overall?id=OtavioVB_Ntickets)
 
 ## Tecnologias Utilizadas
 - [Docker/Docker-Compose](https://docs.docker.com/)
