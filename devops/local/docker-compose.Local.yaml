@@ -5,7 +5,7 @@ services:
     image: postgres
     container_name: postgres
     ports: 
-      - 48740:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: suporte@ntickets.com.br
       POSTGRES_PASSWORD: ntickets@123
@@ -24,7 +24,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "suporte@ntickets.com.br"
       PGADMIN_DEFAULT_PASSWORD: "ntickets@123"
     ports:
-      - 48750:80
+      - 80:80
     restart: always
     depends_on:
       - postgres
@@ -38,8 +38,8 @@ services:
       RABBITMQ_DEFAULT_USER: suporte@ntickets.com.br
       RABBITMQ_DEFAULT_PASS: ntickets@123
     ports:
-      - 48760:5672
-      - 48770:15672
+      - 5672:5672
+      - 15672:15672
     restart: always
     networks:
       - ntickets-network
@@ -58,7 +58,7 @@ services:
     ports:
       - 48730:9090
     volumes:
-      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus-config.yaml:/etc/prometheus/prometheus.yml
     depends_on:
       - opentelemetry
     networks:
@@ -69,7 +69,7 @@ services:
     container_name: opentelemetry
     command: ["--config=/etc/otel-collector-config.yaml"]
     ports:
-      - 48720:4317
+      - 4317:4317
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     depends_on:
