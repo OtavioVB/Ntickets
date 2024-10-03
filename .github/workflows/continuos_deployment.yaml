@@ -1,0 +1,36 @@
+name: Continuos Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Install Sonar Scanner
+      shell: pwsh
+      run: |
+        New-Item -Path ./.sonar/scanner -ItemType Directory
+        dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+    - name: Restore Dependencies
+      run: dotnet restore
+    - name: Build And Test
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: pwsh
+      run: |
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"OtavioVB_Ntickets" /o:"otaviovb-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,**/DependencyInjection.cs,functions/**,**/UseCases/**" /d:sonar.exclusions="tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,benchs/**,**/DependencyInjection.cs,functions/**"
+        dotnet build --no-restore
+        dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/Ntickets.UnitTests/Ntickets.UnitTests.csproj
+        ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
