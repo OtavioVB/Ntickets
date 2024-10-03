@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ntickets.BuildingBlocks.NotificationContext\Ntickets.BuildingBlocks.NotificationContext.csproj" />
+  </ItemGroup>
+
 </Project>

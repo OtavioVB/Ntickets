@@ -6,4 +6,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Ulid" Version="1.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\Ntickets.BuildingBlocks.EventContext\Ntickets.BuildingBlocks.EventContext.csproj" />
+    <ProjectReference Include="..\Ntickets.Domain\Ntickets.Domain.csproj" />
+    <ProjectReference Include="..\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\EventContext\" />
+  </ItemGroup>
+
 </Project>
