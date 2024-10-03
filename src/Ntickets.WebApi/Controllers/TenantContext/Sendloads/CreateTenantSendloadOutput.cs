@@ -6,14 +6,14 @@ namespace Ntickets.WebApi.Controllers.TenantContext.Sendloads;
 public readonly struct CreateTenantSendloadOutput
 {
     public string TenantId { get; }
-    public string CreatedAt { get; }
+    public DateTime CreatedAt { get; }
     public string Status { get; }
     public string FantasyName { get; }
     public string LegalName { get; }
     public string Document { get; }
     public string Email { get; }
     public string Phone { get; }
-    public string LastModifiedAt { get; }
+    public DateTime LastModifiedAt { get; }
     public INotification[] Notifications { get; }
 
     private CreateTenantSendloadOutput(IdValueObject tenantId, DateTimeValueObject createdAt, TenantStatusValueObject status, FantasyNameValueObject fantasyName, LegalNameValueObject legalName, DocumentValueObject document, EmailValueObject email, PhoneValueObject phone, DateTimeValueObject lastModifiedAt, INotification[] notifications)

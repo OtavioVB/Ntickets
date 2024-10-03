@@ -5,6 +5,8 @@ using Ntickets.Infrascructure.EntityFrameworkCore;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
+using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork;
+using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
 using Ntickets.Infrascructure.RabbitMq;
 using Ntickets.Infrascructure.RabbitMq.Interfaces;
 
@@ -32,6 +34,12 @@ public static class DependencyInjection
                 npgsqlOptionsAction: npgsqlOptions => npgsqlOptions.MigrationsAssembly(
                     assemblyName: DB_CONTEXT_ASSEMBLY_MIGRATIONS)),
             poolSize: DEFAULT_DB_CONTEXT_POOL_SIZE);
+
+        #endregion
+
+        #region Entity Framework Core UnitOfWork Configuration
+
+        serviceCollection.AddScoped<IUnitOfWork, DefaultUnitOfWork>();
 
         #endregion
 

@@ -2,6 +2,6 @@
 
 public enum EnumExchangeType
 {
-    Topic = 1,
-    Direct = 2,
+    topic = 1,
+    direct = 2,
 }

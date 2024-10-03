@@ -39,6 +39,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{D6B72DC6-9B1C-448C-84D5-FED13082DB6D}"
 	ProjectSection(SolutionItems) = preProject
 		devops\local\docker-compose.Local.yaml = devops\local\docker-compose.Local.yaml
+		devops\local\otel-collector-config.yaml = devops\local\otel-collector-config.yaml
+		devops\local\prometheus-config.yaml = devops\local\prometheus-config.yaml
 	EndProjectSection
 EndProject
 Global

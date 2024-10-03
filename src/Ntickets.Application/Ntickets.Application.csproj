@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\EventContext\" />
-  </ItemGroup>
-
 </Project>
