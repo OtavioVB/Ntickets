@@ -37,10 +37,17 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.ObservabilityContext", "libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj", "{69FBAC0F-CC84-4545-B700-8CA5F34AA34C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{D6B72DC6-9B1C-448C-84D5-FED13082DB6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "local", "local", "{DF956B9E-DDF2-44DA-AE63-863B97015107}"
 	ProjectSection(SolutionItems) = preProject
 		devops\local\docker-compose.Local.yaml = devops\local\docker-compose.Local.yaml
 		devops\local\otel-collector-config.yaml = devops\local\otel-collector-config.yaml
 		devops\local\prometheus-config.yaml = devops\local\prometheus-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "continuos-deployment", "continuos-deployment", "{03FD2AE0-BB14-46F0-8325-EAA21E50E45B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\continuos_deployment.yaml = .github\workflows\continuos_deployment.yaml
 	EndProjectSection
 EndProject
 Global
@@ -109,6 +116,8 @@ Global
 		{7BA14BDE-A63F-4A83-AAE3-32A853C56C17} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 		{FFA1E31B-7CB3-4CA2-BF0F-D52A6B341681} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
 		{69FBAC0F-CC84-4545-B700-8CA5F34AA34C} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
+		{DF956B9E-DDF2-44DA-AE63-863B97015107} = {D6B72DC6-9B1C-448C-84D5-FED13082DB6D}
+		{03FD2AE0-BB14-46F0-8325-EAA21E50E45B} = {D6B72DC6-9B1C-448C-84D5-FED13082DB6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {152FAC3D-1AF3-4FAB-BF94-CA91A3091897}
