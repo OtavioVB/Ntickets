@@ -77,6 +77,38 @@ jobs:
     - name: Parar as Dependências do Docker
       if: always() 
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
+  unit-tests:
+    name: Testes de Unidade
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: build-application
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Rodar Testes de Aceitação na Aplicação
+      run: |
+        dotnet build --no-restore
+        dotnet test --no-build --verbosity normal ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
+  integration-tests:
+    name: Testes de Unidade
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: build-application
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Rodar Testes de Aceitação na Aplicação
+      run: |
+        dotnet build --no-restore
+        dotnet test --no-build --verbosity normal ./tsts/integration/Ntickets.IntegrationTests/Ntickets.IntegrationTests.csproj
   sonar:
     name: Análise Estática de Código
     runs-on: ubuntu-latest
