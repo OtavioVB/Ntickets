@@ -53,10 +53,16 @@ jobs:
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
-    - name: Executar Aplicação .NET 8 e Rodar os Testes
+    - name: Executar Aplicação .NET 8
       run: |
-        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
+        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" &
+    - name: Rodar Testes de Aceitação na Aplicação
+      run: |
+        dotnet build --no-restore
         dotnet test --no-build --verbosity normal ./tsts/functional/Ntickets.FunctionalTests/Ntickets.FunctionalTests.csproj
+    - name: Parar Aplicação
+      run: |
+        pkill dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
     - name: Parar as Dependências do Docker
       if: always() 
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
