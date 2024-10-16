@@ -52,7 +52,6 @@ jobs:
   sonar:
     runs-on: ubuntu-latest
     environment: Production
-    if: ${{inputs.runSonar == true}} 
     steps:
     - name: Checkout do Repositório
       uses: actions/checkout@v3
