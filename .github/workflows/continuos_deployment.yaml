@@ -55,6 +55,9 @@ jobs:
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
+    - name: Aplicar Migração do Banco de Dados
+      run: |
+        dotnet ef database update --project "./src/Ntickets.Infrascructure/Ntickets.Infrascructure.csproj"
     - name: Executar Aplicação .NET 8
       run: |
         dotnet dev-certs https --trust
