@@ -54,8 +54,7 @@ jobs:
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
     - name: Executar Aplicação .NET 8
       run: |
-        dotnet build --no-restore
-        dotnet run 
+        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
     - name: Rodar Testes de Aceitação na Aplicação
       run: |
         dotnet build --no-restore
