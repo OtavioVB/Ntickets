@@ -6,6 +6,7 @@
 - [Análise Estática do Código](https://sonarcloud.io/summary/overall?id=OtavioVB_Ntickets)
 
 ## Tecnologias Utilizadas
+- [Git/GitHub Actions](https://docs.github.com/pt/actions)
 - [Docker/Docker-Compose](https://docs.docker.com/)
 - [.NET 8/ASP.NET Core 8](https://learn.microsoft.com/pt-br/aspnet/core/?view=aspnetcore-8.0)
 - [PostgreeSQL/PgAdmin](https://www.postgresql.org/docs/)
@@ -21,6 +22,7 @@
 - [Prometheus](https://prometheus.io/docs/introduction/overview/)
 - [Grafana Loki](https://grafana.com/docs/loki/latest/)
 - [Grafana k6](https://k6.io/docs/)
+- [SpecFlow](https://docs.specflow.org/en/latest/)
 
 ## Conceitos Aplicados
 

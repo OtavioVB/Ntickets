@@ -1,6 +1,7 @@
 using Ntickets.Infrascructure;
 using Ntickets.Application;
 using Ntickets.BuildingBlocks.ObservabilityContext;
+using Microsoft.OpenApi.Models;
 
 namespace Ntickets.WebApi;
 
@@ -11,6 +12,17 @@ public sealed class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers();
+
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc(
+                name: builder.Configuration["ApplicationNamespace"]!,
+                info: new OpenApiInfo()
+                {
+                    Title = builder.Configuration["ApplicationNamespace"]!,
+                    Version = builder.Configuration["ApplicationVersion"]!
+                });
+        });
 
         builder.Services.ApplyObservabilityDependenciesConfiguration(
             serviceName: builder.Configuration["ApplicationName"]!,
@@ -31,6 +43,15 @@ public sealed class Program
 
         var app = builder.Build();
 
+        app.UseHttpsRedirection();
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.DocumentTitle = builder.Configuration["ApplicationNamespace"]!;
+            options.DisplayRequestDuration();
+        });
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
         app.Run();
     }
