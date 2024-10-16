@@ -3,18 +3,18 @@ using Ntickets.Domain.ValueObjects;
 
 namespace Ntickets.WebApi.Controllers.TenantContext.Sendloads;
 
-public readonly struct CreateTenantSendloadOutput
+public struct CreateTenantSendloadOutput
 {
-    public string TenantId { get; }
-    public DateTime CreatedAt { get; }
-    public string Status { get; }
-    public string FantasyName { get; }
-    public string LegalName { get; }
-    public string Document { get; }
-    public string Email { get; }
-    public string Phone { get; }
-    public DateTime LastModifiedAt { get; }
-    public INotification[] Notifications { get; }
+    public string TenantId { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string Status { get; set; }
+    public string FantasyName { get; set; }
+    public string LegalName { get; set; }
+    public string Document { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public DateTime LastModifiedAt { get; set; }
+    public INotification[] Notifications { get; set; }
 
     private CreateTenantSendloadOutput(IdValueObject tenantId, DateTimeValueObject createdAt, TenantStatusValueObject status, FantasyNameValueObject fantasyName, LegalNameValueObject legalName, DocumentValueObject document, EmailValueObject email, PhoneValueObject phone, DateTimeValueObject lastModifiedAt, INotification[] notifications)
     {

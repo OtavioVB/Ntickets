@@ -13,6 +13,8 @@
 - [MongoDb/MongoExpress](https://www.mongodb.com/pt-br/docs/languages/csharp/)
 - [Otel Collector/OpenTelemetry](https://opentelemetry.io/docs/)
 - [SonarCloud/SonarQube](https://docs.sonarsource.com/sonarcloud/)
+- [Next.js](https://nextjs.org/docs)
+- [React.js](https://react.dev/)
 - [RabbitMq](https://www.rabbitmq.com/docs)
 - [Jaeger](https://www.jaegertracing.io/docs/1.18/)
 - [Grafana](https://grafana.com/docs/grafana/latest/)

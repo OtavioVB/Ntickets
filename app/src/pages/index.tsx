@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 
 const Index = ({
 
@@ -6,7 +7,14 @@ const Index = ({
 
 }) => {
     return (
-        <h1>Ntickets</h1>
+        <>
+            <Head>
+                <title>Ntickets</title>
+            </Head>
+            <main>
+                <h1>Ntickets</h1>
+            </main>
+        </>
     );
 }
 

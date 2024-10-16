@@ -7,8 +7,6 @@ using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
-using Ntickets.Infrascructure.RabbitMq;
-using Ntickets.Infrascructure.RabbitMq.Interfaces;
 
 namespace Ntickets.Infrascructure;
 
@@ -51,14 +49,6 @@ public static class DependencyInjection
         #endregion
 
         #region RabbitMq Connection Configuration
-
-        serviceCollection.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>((serviceProvider)
-            => new RabbitMqPublisher(
-                rabbitMqConnectionUserName: rabbitMqConnectionUserName,
-                rabbitMqConnectionPassword: rabbitMqConnectionPassword,
-                rabbitMqConnectionVirtualHost: rabbitMqConnectionVirtualHost,
-                rabbitMqConnectionHostName: rabbitMqConnectionHostName,
-                rabbitMqConnectionClientProviderName: rabbitMqConnectionClientProviderName));
 
         #endregion
     }

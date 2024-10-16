@@ -21,15 +21,12 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
     private readonly ITraceManager _traceManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantService _tenantService;
-    private readonly IEventService<CreateTenantEvent> _eventService;
 
-    public CreateTenantUseCase(ITraceManager traceManager, IUnitOfWork unitOfWork, ITenantService tenantService,
-        IEventService<CreateTenantEvent> eventService)
+    public CreateTenantUseCase(ITraceManager traceManager, IUnitOfWork unitOfWork, ITenantService tenantService)
     {
         _traceManager = traceManager;
         _unitOfWork = unitOfWork;
         _tenantService = tenantService;
-        _eventService = eventService;
     }
 
     public Task<MethodResult<INotification, CreateTenantUseCaseOutput>> ExecuteUseCaseAsync(CreateTenantUseCaseInput input, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
@@ -55,20 +52,6 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
                         if (createTenantServiceResult.IsError)
                             return (false, MethodResult<INotification, CreateTenantUseCaseOutput>.FactoryError(
                                 notifications: createTenantServiceResult.Notifications));
-
-                        await _eventService.PublishEventAsync(
-                            @event: new CreateTenantEvent(
-                                tenantId: createTenantServiceResult.Output.TenantId,
-                                createdAt: createTenantServiceResult.Output.CreatedAt,
-                                fantasyName: createTenantServiceResult.Output.FantasyName,
-                                legalName: createTenantServiceResult.Output.LegalName,
-                                document: createTenantServiceResult.Output.Document,
-                                email: createTenantServiceResult.Output.Email,
-                                phone: createTenantServiceResult.Output.Phone,
-                                status: createTenantServiceResult.Output.Status,
-                                lastModifiedAt: createTenantServiceResult.Output.LastModifiedAt),
-                            auditableInfo: auditableInfo,
-                            cancellationToken: cancellationToken);
 
                         return (true, MethodResult<INotification, CreateTenantUseCaseOutput>.FactorySuccess(
                             notifications: createTenantServiceResult.Notifications,
