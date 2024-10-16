@@ -37,6 +37,7 @@ jobs:
   acceptance-tests:
     runs-on: ubuntu-latest
     environment: Production
+    needs: build-application
     steps:
     - name: Checkout do Repositório
       uses: actions/checkout@v3
@@ -52,12 +53,9 @@ jobs:
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
-    - name: Executar Aplicação .NET 8
+    - name: Executar Aplicação .NET 8 e Rodar os Testes
       run: |
         dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
-    - name: Rodar Testes de Aceitação na Aplicação
-      run: |
-        dotnet build --no-restore
         dotnet test --no-build --verbosity normal ./tsts/functional/Ntickets.FunctionalTests/Ntickets.FunctionalTests.csproj
     - name: Parar as Dependências do Docker
       if: always() 
@@ -65,6 +63,7 @@ jobs:
   sonar:
     runs-on: ubuntu-latest
     environment: Production
+    needs: build-application
     steps:
     - name: Checkout do Repositório
       uses: actions/checkout@v3
