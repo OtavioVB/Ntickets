@@ -89,12 +89,12 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 8.0.x
-    - name: Rodar Testes de Aceitação na Aplicação
+    - name: Rodar Testes de Unidade na Aplicação
       run: |
-        dotnet build --no-restore
+        dotnet build
         dotnet test --no-build --verbosity normal ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
   integration-tests:
-    name: Testes de Unidade
+    name: Testes de Integração
     runs-on: ubuntu-latest
     environment: Production
     needs: build-application
@@ -105,9 +105,9 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 8.0.x
-    - name: Rodar Testes de Aceitação na Aplicação
+    - name: Rodar Testes de Integração na Aplicação
       run: |
-        dotnet build --no-restore
+        dotnet build
         dotnet test --no-build --verbosity normal ./tsts/integration/Ntickets.IntegrationTests/Ntickets.IntegrationTests.csproj
   sonar:
     name: Análise Estática de Código
