@@ -1,4 +1,4 @@
-name: Continuos Deployment
+name: Esteira de Integração Contínua e Deploy Contínuo da Ntickets
 
 on:
   push:
@@ -8,28 +8,65 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      runSonar:
+        description: 'Rodar Análise Estática do Código'
+        type: boolean
+        required: false
+        default: true
+      runFunctionTests:
+        description: 'Rodar Testes De Aceitação'
+        type: boolean
+        required: false
+        default: true
 
 jobs:
-  sonar:
+  acceptance-tests:
     runs-on: ubuntu-latest
     environment: Production
     steps:
-    - name: Checkout
+    - name: Checkout do Repositório
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Setup .NET 8
+    - name: Instalação das Dependências do .NET 8
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 8.0.x
-    - name: Install Sonar Scanner
+    - name: Instalação das Dependências do .NET 6
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restaurar Dependências da Solução
+      run: dotnet restore Ntickets.sln
+    - name: Implantar Dependências do Docker
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
+    - name: Rodar Testes de Aceitação na Aplicação
+      run: |
+        dotnet build --no-restore
+        dotnet test --no-build --verbosity normal ./tsts/functional/Ntickets.FunctionalTests/Ntickets.FunctionalTests.csproj
+    - name: Parar as Dependências do Docker
+      if: always() 
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
+  sonar:
+    runs-on: ubuntu-latest
+    environment: Production
+    if: ${{inputs.runSonar == true}} 
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Instalar o Scanner de Análise Estática de Código
       shell: pwsh
       run: |
         New-Item -Path ./.sonar/scanner -ItemType Directory
         dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build And Test
+    - name: Restaurar Dependências da Solução
+      run: dotnet restore Ntickets.sln
+    - name: Construir Solução e Testar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,5 +74,5 @@ jobs:
       run: |
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"OtavioVB_Ntickets" /o:"otaviovb-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,**/DependencyInjection.cs,functions/**,**/UseCases/**" /d:sonar.exclusions="tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,benchs/**,**/DependencyInjection.cs,functions/**"
         dotnet build --no-restore
-        dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/Ntickets.UnitTests/Ntickets.UnitTests.csproj
+        dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
