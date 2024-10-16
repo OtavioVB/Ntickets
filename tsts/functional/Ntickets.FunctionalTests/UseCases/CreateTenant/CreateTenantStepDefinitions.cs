@@ -2,6 +2,7 @@ using Ntickets.FunctionalTests.UseCases.CreateTenant.Models;
 using System.Net.Http.Json;
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Ntickets.FunctionalTests.UseCases.CreateTenant;
 
@@ -10,6 +11,7 @@ public class CreateTenantStepDefinitions
 {
     private string _createTenantUrl = "http://localhost:5001/api/v1/business-intelligence/tenants";
     private HttpClient _httpClient;
+    private ILogger _logger;
 
     private CreateTenantPayloadInput? _createTenantPayloadInput = null;
     private CreateTenantSendloadOutput? _createTenantSendloadOutput = null;
@@ -17,6 +19,13 @@ public class CreateTenantStepDefinitions
 
     public CreateTenantStepDefinitions()
     {
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole(); 
+        });
+
+        _logger = loggerFactory.CreateLogger(typeof(CreateTenantStepDefinitions));
+
         var handler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
@@ -51,6 +60,12 @@ public class CreateTenantStepDefinitions
             cancellationToken: CancellationToken.None);
 
         var responseString = await response.Content.ReadAsStringAsync();
+
+        _logger.LogInformation(
+            message: "[{nameOf}] StatusCode: {statusCode} Response: {response}",
+            response.StatusCode.ToString(),
+            nameof(QuandoForSolicitadoACriacaoDaContratacaoDoServicoNaPlataforma),
+            responseString);
 
         _httpResponseMessage = response;
 
