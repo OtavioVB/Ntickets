@@ -22,6 +22,7 @@ on:
 
 jobs:
   build-application:
+    name: Construção da Aplicação
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -35,6 +36,7 @@ jobs:
       run: |
          dotnet build
   acceptance-tests:
+    name: Testes de Aceitação
     runs-on: ubuntu-latest
     environment: Production
     needs: build-application
@@ -53,20 +55,26 @@ jobs:
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
+    - name: Instalar Certificado
+      run: |
+        sudo cp ./path/to/certificado.crt /usr/local/share/ca-certificates/certificado.crt
+        sudo update-ca-certificates
     - name: Executar Aplicação .NET 8
       run: |
-        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" &
+        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
     - name: Rodar Testes de Aceitação na Aplicação
       run: |
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal ./tsts/functional/Ntickets.FunctionalTests/Ntickets.FunctionalTests.csproj
     - name: Parar Aplicação
       run: |
-        pkill dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
+        kill $(cat pidfile)
+        rm pidfile
     - name: Parar as Dependências do Docker
       if: always() 
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
   sonar:
+    name: Análise Estática de Código
     runs-on: ubuntu-latest
     environment: Production
     needs: build-application
