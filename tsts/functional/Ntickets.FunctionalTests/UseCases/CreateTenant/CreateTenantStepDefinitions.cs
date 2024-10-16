@@ -9,11 +9,20 @@ namespace Ntickets.FunctionalTests.UseCases.CreateTenant;
 public class CreateTenantStepDefinitions
 {
     private string _createTenantUrl = "http://localhost:5001/api/v1/business-intelligence/tenants";
-    private HttpClient _httpClient = new HttpClient();
+    private HttpClient _httpClient;
 
     private CreateTenantPayloadInput? _createTenantPayloadInput = null;
     private CreateTenantSendloadOutput? _createTenantSendloadOutput = null;
     private HttpResponseMessage? _httpResponseMessage = null;
+
+    public CreateTenantStepDefinitions()
+    {
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        };
+        _httpClient = new HttpClient(handler);
+    }
 
     [Given(@"um usuário anônimo da plataforma com informações válidas de (.*), (.*), (.*), (.*) e (.*)")]
     public void DadoUmUsuarioAnonimoQueGostariaCriarContracaoDoServicoNaPlataformaComDadosValidos(

@@ -55,12 +55,10 @@ jobs:
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
-    - name: Instalar Certificado
-      run: |
-        sudo cp ./path/to/certificado.crt /usr/local/share/ca-certificates/certificado.crt
-        sudo update-ca-certificates
     - name: Executar Aplicação .NET 8
       run: |
+        dotnet dev-certs https --trust
+        dotnet dev-certs https --check
         dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
     - name: Rodar Testes de Aceitação na Aplicação
       run: |
