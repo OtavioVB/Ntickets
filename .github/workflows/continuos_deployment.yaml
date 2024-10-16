@@ -60,7 +60,7 @@ jobs:
         dotnet tool install --global dotnet-ef
     - name: Aplicar Migração do Banco de Dados
       run: |
-        dotnet ef database update --project "./src/Ntickets.Infrascructure/Ntickets.Infrascructure.csproj"
+        dotnet ef database update --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
     - name: Executar Aplicação .NET 8
       run: |
         dotnet dev-certs https --trust
