@@ -21,6 +21,19 @@ on:
         default: true
 
 jobs:
+  build-application:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Testar Construção da Aplicação
+      run: |
+         dotnet build
   acceptance-tests:
     runs-on: ubuntu-latest
     environment: Production
@@ -41,7 +54,8 @@ jobs:
       run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
     - name: Executar Aplicação .NET 8
       run: |
-        dotnet run ./src/Ntickets.WebApi/Ntickets.WebApi.csproj
+        dotnet build --no-restore
+        dotnet run 
     - name: Rodar Testes de Aceitação na Aplicação
       run: |
         dotnet build --no-restore
