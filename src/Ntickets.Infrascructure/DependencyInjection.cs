@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Infrascructure.EntityFrameworkCore;
@@ -19,19 +20,42 @@ public static class DependencyInjection
         string rabbitMqConnectionPassword,
         string rabbitMqConnectionVirtualHost,
         string rabbitMqConnectionHostName,
-        string rabbitMqConnectionClientProviderName)
+        string rabbitMqConnectionClientProviderName,
+        bool configureDbContextInMemory = false)
     {
         #region Entity Framework Core DbContext Configuration
 
         const int DEFAULT_DB_CONTEXT_POOL_SIZE = 512;
-        const string DB_CONTEXT_ASSEMBLY_MIGRATIONS = "Ntickets.Infrascructure";
 
-        serviceCollection.AddDbContextPool<DataContext>(
-            optionsAction: options => options.UseNpgsql(
-                connectionString: connectionString,
-                npgsqlOptionsAction: npgsqlOptions => npgsqlOptions.MigrationsAssembly(
-                    assemblyName: DB_CONTEXT_ASSEMBLY_MIGRATIONS)),
-            poolSize: DEFAULT_DB_CONTEXT_POOL_SIZE);
+        if (!configureDbContextInMemory)
+        {
+            const string DB_CONTEXT_ASSEMBLY_MIGRATIONS = "Ntickets.Infrascructure";
+
+            serviceCollection.AddDbContextPool<DataContext>(
+                optionsAction: options => options.UseNpgsql(
+                    connectionString: connectionString,
+                    npgsqlOptionsAction: npgsqlOptions => npgsqlOptions.MigrationsAssembly(
+                        assemblyName: DB_CONTEXT_ASSEMBLY_MIGRATIONS)),
+                poolSize: DEFAULT_DB_CONTEXT_POOL_SIZE);
+        }
+        else
+        {
+            const string IN_MEMORY_DATABASE_NAME = "in_memory_database";
+
+            serviceCollection.AddDbContextPool<DataContext>(
+                optionsAction: options => 
+                {
+                    options.UseInMemoryDatabase(
+                        databaseName: IN_MEMORY_DATABASE_NAME);
+                    options.EnableSensitiveDataLogging(
+                        sensitiveDataLoggingEnabled: true);
+                    options.ConfigureWarnings(warningOptions => {
+                        warningOptions.Ignore(InMemoryEventId.TransactionIgnoredWarning);
+                        warningOptions.Log(InMemoryEventId.TransactionIgnoredWarning);
+                    });
+                },
+                poolSize: DEFAULT_DB_CONTEXT_POOL_SIZE);
+        }
 
         #endregion
 

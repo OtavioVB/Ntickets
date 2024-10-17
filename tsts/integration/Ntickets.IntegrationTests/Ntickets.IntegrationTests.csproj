@@ -11,11 +11,30 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libs\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj" />
+    <ProjectReference Include="..\..\..\libs\Ntickets.BuildingBlocks.EventContext\Ntickets.BuildingBlocks.EventContext.csproj" />
+    <ProjectReference Include="..\..\..\libs\Ntickets.BuildingBlocks.MethodResultsContext\Ntickets.BuildingBlocks.MethodResultsContext.csproj" />
+    <ProjectReference Include="..\..\..\libs\Ntickets.BuildingBlocks.NotificationContext\Ntickets.BuildingBlocks.NotificationContext.csproj" />
+    <ProjectReference Include="..\..\..\libs\Ntickets.BuildingBlocks.ObservabilityContext\Ntickets.BuildingBlocks.ObservabilityContext.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.Application\Ntickets.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.Domain\Ntickets.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.WebApi\Ntickets.WebApi.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.Test.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
