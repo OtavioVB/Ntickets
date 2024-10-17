@@ -51,6 +51,7 @@ public readonly struct DocumentValueObject
                     var invalidCharacterNotification = NotificationBuilder.BuildErrorNotification(
                         code: CPF_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_CODE,
                         message: CPF_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_MESSAGE);
+                    notifications.Add(invalidCharacterNotification);
                     break;
                 }
             }
@@ -79,8 +80,9 @@ public readonly struct DocumentValueObject
                 if (!char.IsDigit(character))
                 {
                     var invalidCharacterNotification = NotificationBuilder.BuildErrorNotification(
-                        code: CPF_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_CODE,
-                        message: CPF_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_MESSAGE);
+                        code: CNPJ_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_CODE,
+                        message: CNPJ_DOCUMENT_MUST_HAVE_ONLY_DIGITS_NOTIFICATION_MESSAGE);
+                    notifications.Add(invalidCharacterNotification);
                     break;
                 }
             }

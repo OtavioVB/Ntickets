@@ -20,4 +20,17 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\" />
+    <Folder Include="Infrascructure\" />
+    <Folder Include="WebApi\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Ntickets.Application\Ntickets.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.Domain\Ntickets.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.Infrascructure\Ntickets.Infrascructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Ntickets.WebApi\Ntickets.WebApi.csproj" />
+  </ItemGroup>
+
 </Project>
