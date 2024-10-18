@@ -20,10 +20,10 @@ public readonly struct EmailValueObject
         MethodResult = methodResult;
     }
 
-    public const int MAX_LENGTH = 255;
+    public const int MAX_LENGTH = 64;
 
     private const string EMAIL_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_CODE = "EMAIL_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED";
-    private const string EMAIL_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_MESSAGE = "O email não pode conter mais que 255 caracteres.";
+    private const string EMAIL_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_MESSAGE = "O email não pode conter mais que 64 caracteres.";
 
     private const string EMAIL_MUST_BE_VALID_NOTIFICATION_CODE = "EMAIL_MUST_BE_VALID";
     private const string EMAIL_MUST_BE_VALID_NOTIFICATION_MESSAGE = "O e-mail precisa ser válido.";
@@ -65,7 +65,7 @@ public readonly struct EmailValueObject
         return new EmailValueObject(
             isValid: true,
             methodResult: MethodResult<INotification>.FactorySuccess(),
-            email: email);
+            email: email.ToLower());
     }
 
     public string GetEmail()
