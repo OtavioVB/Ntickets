@@ -3,7 +3,7 @@ using Ntickets.BuildingBlocks.EventContext.Interfaces;
 
 namespace Ntickets.Application.Events.Base.Interfaces;
 
-public interface IEventService<TEvent>
+public interface IEventService<in TEvent>
     where TEvent : class
 {
     public abstract Task PublishEventAsync(

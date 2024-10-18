@@ -11,7 +11,7 @@ public abstract class EventBaseService<TEvent> : IEventService<TEvent>
 {
     protected readonly ITraceManager _traceManager;
 
-    public EventBaseService(
+    protected EventBaseService(
         ITraceManager traceManager)
     {
         _traceManager = traceManager;
