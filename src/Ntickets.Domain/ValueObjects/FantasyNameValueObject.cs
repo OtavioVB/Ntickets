@@ -28,7 +28,7 @@ public readonly struct FantasyNameValueObject
     private const string FANTASY_NAME_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_MESSAGE = "O nome fantasia não pode conter mais que 64 caracteres.";
 
     private const string FANTASY_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_CODE = "FANTASY_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE";
-    private const string FANTASY_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_MESSAGE = "FANTASY_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE";
+    private const string FANTASY_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_MESSAGE = "O nome fantasia não pode ser vazio ou conter apenas espaços em branco.";
 
     public static FantasyNameValueObject Factory(string fantasyName)
     {

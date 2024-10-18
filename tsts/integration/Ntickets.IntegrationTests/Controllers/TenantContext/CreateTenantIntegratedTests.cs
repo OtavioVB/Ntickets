@@ -20,8 +20,8 @@ public sealed class CreateTenantIntegratedTests : IClassFixture<CustomWebApplica
     }
 
     [Theory]
-    [InlineData("Eventos", "Eventos LTDA", "21330277000152", "eventos-pj@ntickets.com.br", "5511958523443")]
-    [InlineData("Eventos", "Otavio Pessoa Fisica", "65360341041", "eventos-pf@ntickets.com.br", "5511958523443")]
+    [InlineData("Eventos", "Eventos LTDA", "21330277000152", "eventos-pj@ntickets.com.br", "5511959937833")]
+    [InlineData("Eventos", "Otavio Pessoa Fisica", "65360341041", "eventos-pf@ntickets.com.br", "5511958520009")]
     public async Task Create_Tenant_Successfull_When_Anonymous_User_Send_Valid_Tenant_Info(
         string fantasyName, string legalName, string document, string email, string phone)
     {

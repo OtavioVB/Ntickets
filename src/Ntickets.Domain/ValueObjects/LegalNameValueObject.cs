@@ -24,10 +24,10 @@ public readonly struct LegalNameValueObject
     private const string DEFAULT_CULTURE_LANGUAGE_INFO = "pt-BR";
 
     private const string LEGAL_NAME_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_CODE = "LEGAL_NAME_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED";
-    private const string LEGAL_NAME_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_MESSAGE = "O nome fantasia não pode conter mais que 64 caracteres.";
+    private const string LEGAL_NAME_LENGTH_COULD_NOT_BE_GREATER_THAN_THE_MAXIMUM_ALLOWED_NOTIFICATION_MESSAGE = "O nome legal não pode conter mais que 64 caracteres.";
 
     private const string LEGAL_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_CODE = "LEGAL_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE";
-    private const string LEGAL_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_MESSAGE = "LEGAL_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE";
+    private const string LEGAL_NAME_COULD_NOT_BE_EMPTY_OR_WHITESPACE_NOTIFICATION_MESSAGE = "O nome legal não pode ser vazio ou conter espaços em branco.";
 
     public static LegalNameValueObject Factory(string legalName)
     {

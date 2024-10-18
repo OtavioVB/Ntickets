@@ -11,6 +11,6 @@ Cenário: Contratante criado com Sucesso
 	E a mensagem de notificação de sucesso 'A criação do whitelabel foi executada com sucesso.' com código 'CREATE_TENANT_HAS_BEEN_EXECUTED_SUCCESSFULL' deve ser retornada
 	Exemplos: 
 		| FantasyName | LegalName            | Document       | Email                      | Phone         |
-		| Eventos     | Eventos LTDA         | 21330277000152 | eventos-pj@ntickets.com.br | 5511958523443 |
-		| Eventos     | Otavio Pessoa Fisica | 65360341041    | eventos-pf@ntickets.com.br | 5511958523443 |
+		| Eventos     | Eventos LTDA         | 21330277000152 | eventos-pj@ntickets.com.br | 5511930944939 |
+		| Eventos     | Otavio Pessoa Fisica | 65360341041    | eventos-pf@ntickets.com.br | 5513948695049 |
 		

@@ -26,9 +26,9 @@ public readonly struct DateTimeValueObject
                 timestamp: DateTime.UtcNow);
 
         return new DateTimeValueObject(
-                isValid: true,
-                methodResult: MethodResult<INotification>.FactorySuccess(),
-                timestamp: timestamp!.Value);
+            isValid: true,
+            methodResult: MethodResult<INotification>.FactorySuccess(),
+            timestamp: timestamp.Value);
     }
 
     public DateTime GetTimestamp()
@@ -39,8 +39,9 @@ public readonly struct DateTimeValueObject
         return Timestamp!.Value;
     }
 
+    private const string DATETIME_STRING_PATTERN = "yyyy-MM-ddTHH:mm:ssZ";
     public string GetTimestampAsString() 
-        => GetTimestamp().ToString();
+        => GetTimestamp().ToUniversalTime().ToString(DATETIME_STRING_PATTERN);
 
     public MethodResult<INotification> GetMethodResult()
         => MethodResult;
