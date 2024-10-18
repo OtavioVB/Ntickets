@@ -43,11 +43,11 @@ public readonly struct EmailValueObject
             notifications.Add(emailLengthNotification);
         }
 
-        try
-        {
-            new MailAddress(email);
-        }
-        catch
+        var isPossibleToCreateMail = MailAddress.TryCreate(
+            address: email,
+            result: out var mail);
+
+        if (!isPossibleToCreateMail)
         {
             var emailMustBeValidNotification = NotificationBuilder.BuildErrorNotification(
                 code: EMAIL_MUST_BE_VALID_NOTIFICATION_CODE,
@@ -65,7 +65,7 @@ public readonly struct EmailValueObject
         return new EmailValueObject(
             isValid: true,
             methodResult: MethodResult<INotification>.FactorySuccess(),
-            email: email.ToLower());
+            email: mail!.Address.ToLower());
     }
 
     public string GetEmail()
