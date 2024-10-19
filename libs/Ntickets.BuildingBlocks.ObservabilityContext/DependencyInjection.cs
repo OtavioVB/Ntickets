@@ -2,6 +2,7 @@
 using Npgsql;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Wrappers;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -66,9 +67,9 @@ public static class DependencyInjection
 
         serviceCollection.AddSingleton<ITraceManager, TraceManager>((serviceProvider)
             => new TraceManager(
-                activitySource: new ActivitySource(
-                    name: serviceName,
-                    version: serviceVersion)));
+                activitySource: new ActivitySourceWrapper(
+                    serviceName: serviceName,
+                    serviceVersion: serviceVersion)));
 
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Wrappers.Interfaces;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 
@@ -7,9 +8,9 @@ namespace Ntickets.BuildingBlocks.ObservabilityContext.Traces;
 
 public sealed class TraceManager : ITraceManager
 {
-    private readonly ActivitySource _activitySource;
+    private readonly IActivitySourceWrapper _activitySource;
 
-    public TraceManager(ActivitySource activitySource)
+    public TraceManager(IActivitySourceWrapper activitySource)
     {
         _activitySource = activitySource;
     }
