@@ -72,6 +72,7 @@ services:
       - 4317:4317
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./logs.json:/etc/output/logs.json
     depends_on:
       - jaeger
     networks:

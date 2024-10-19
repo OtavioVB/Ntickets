@@ -11,6 +11,7 @@ using Ntickets.WebApi.Controllers.TenantContext.Payloads;
 using Ntickets.WebApi.Controllers.TenantContext.Sendloads;
 using System.Diagnostics;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace Ntickets.WebApi.Controllers.TenantContext;
 
@@ -18,8 +19,11 @@ namespace Ntickets.WebApi.Controllers.TenantContext;
 [ApiController]
 public sealed class TenantController : CustomizedControllerBase
 {
-    public TenantController(ITraceManager traceManager) : base(traceManager)
+    private readonly ILogger<TenantController> _logger;
+
+    public TenantController(ILogger<TenantController> logger, ITraceManager traceManager) : base(traceManager)
     {
+        _logger = logger;
     }
 
     [HttpPost]
@@ -33,6 +37,14 @@ public sealed class TenantController : CustomizedControllerBase
     {
         var auditableInfo = AuditableInfoValueObject.Factory(
             correlationId: correlationId);
+
+        _logger.LogInformation(@"[{Type}][{Timestamp}][CorrelationId = {CorrelationId}][HTTP {Method} {Endpoint}] Request: {Payload}", 
+            $"{nameof(TenantController)}.{nameof(HttpPostCreateTenantAsync)}",
+            DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss"),
+            correlationId,
+            HttpContext.Request.Method,
+            HttpContext.Request.Path,
+            JsonSerializer.Serialize(input));
 
         return _traceManager.ExecuteTraceAsync(
             traceName: $"{nameof(TenantController)}.{nameof(HttpPostCreateTenantAsync)}",

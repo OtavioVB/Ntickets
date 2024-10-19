@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
@@ -14,6 +15,30 @@ namespace Ntickets.BuildingBlocks.ObservabilityContext;
 
 public static class DependencyInjection
 {
+    public static void ApplyObservabilityLoggingDependenciesConfiguration(
+        this ILoggingBuilder logging,
+        string serviceName,
+        string serviceNamespace,
+        string serviceVersion,
+        string serviceInstanceId,
+        string openTelemetryGrpcEndpoint)
+    {
+        logging.AddOpenTelemetry(options => 
+        {
+            options.IncludeScopes = true;
+            options.IncludeFormattedMessage = true;
+            options.ParseStateValues = true;
+            options.SetResourceBuilder(ResourceBuilder.CreateDefault());
+            options.AddOtlpExporter(exporter => 
+            {
+                exporter.ExportProcessorType = ExportProcessorType.Batch;
+                exporter.Endpoint = new Uri(
+                    uriString: openTelemetryGrpcEndpoint);
+                exporter.Protocol = OtlpExportProtocol.Grpc;
+            });
+        });
+    }
+
     public static void ApplyObservabilityDependenciesConfiguration(
         this IServiceCollection serviceCollection,
         string serviceName,

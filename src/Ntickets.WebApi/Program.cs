@@ -24,12 +24,27 @@ public sealed class Program
                 });
         });
 
+        builder.Logging.ClearProviders();
+
+        builder.Logging.AddConsole();
+
+        #region Observability Configuration
+
+        builder.Logging.ApplyObservabilityLoggingDependenciesConfiguration(
+            serviceName: builder.Configuration["ApplicationName"]!,
+            serviceNamespace: builder.Configuration["ApplicationNamespace"]!,
+            serviceVersion: builder.Configuration["ApplicationVersion"]!,
+            serviceInstanceId: builder.Configuration["ApplicationId"]!,
+            openTelemetryGrpcEndpoint: builder.Configuration["Infrascructure:OpenTelemetry:GrpcEndpoint"]!);
+
         builder.Services.ApplyObservabilityDependenciesConfiguration(
             serviceName: builder.Configuration["ApplicationName"]!,
             serviceNamespace: builder.Configuration["ApplicationNamespace"]!,
             serviceVersion: builder.Configuration["ApplicationVersion"]!,
             serviceInstanceId: builder.Configuration["ApplicationId"]!,
             openTelemetryGrpcEndpoint: builder.Configuration["Infrascructure:OpenTelemetry:GrpcEndpoint"]!);
+
+        #endregion
 
         builder.Services.ApplyInfrascructureDependenciesConfiguration(
             connectionString: builder.Configuration["Infrascructure:Database:PostgreeSQL:ConnectionString"]!,

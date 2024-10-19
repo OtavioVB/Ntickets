@@ -41,6 +41,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "local", "local", "{DF956B9E-DDF2-44DA-AE63-863B97015107}"
 	ProjectSection(SolutionItems) = preProject
 		devops\local\docker-compose.Local.yaml = devops\local\docker-compose.Local.yaml
+		devops\local\logs.json = devops\local\logs.json
 		devops\local\otel-collector-config.yaml = devops\local\otel-collector-config.yaml
 		devops\local\prometheus-config.yaml = devops\local\prometheus-config.yaml
 	EndProjectSection

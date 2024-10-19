@@ -6,11 +6,12 @@ receivers:
 exporters:
   prometheus:
     endpoint: "0.0.0.0:8889"
-
   jaeger:
     endpoint: jaeger:14250
     tls:
       insecure: true
+  file:
+    path: /etc/output/logs.json
 
 processors:
   batch:
@@ -23,8 +24,11 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [jaeger]
-
     metrics:
       receivers: [otlp]
       processors: [batch]
       exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [file]
