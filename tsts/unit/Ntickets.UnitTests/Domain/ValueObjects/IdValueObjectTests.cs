@@ -1,6 +1,7 @@
 ﻿using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 using Ntickets.Domain.ValueObjects;
+using Ntickets.Domain.ValueObjects.Exceptions;
 
 namespace Ntickets.UnitTests.Domain.ValueObjects;
 
@@ -41,5 +42,31 @@ public sealed class IdValueObjectTests
         Assert.Equal(Ulid.Parse(id), idValueObject.GetId());
         Assert.Empty(idValueObject.GetMethodResult().Notifications);
         Assert.Equal(methodResult, idValueObject);
+    }
+
+    [Theory]
+    [InlineData("00000000000000000000000000")]
+    [InlineData("76EZ91ZPZZZZZZZZZZZZZZZZZZ")]
+    public void Id_Value_Object_Should_Be_Not_Valid(string id)
+    {
+        // Arrange
+        const string EXPECTED_CODE = "ID_COULD_NOT_BE_INVALID";
+        const string EXPECTED_MESSAGE = "O código de identificação (ID) deve ser válido.";
+        const string EXPECTED_TYPE = "Error";
+
+        // Act
+        var idValueObject = IdValueObject.Factory(
+            id: Ulid.Parse(id));
+        var methodResult = idValueObject.GetMethodResult();
+
+        // Assert
+        Assert.False(idValueObject.IsValid);
+        Assert.False(idValueObject.GetMethodResult().IsSuccess);
+        Assert.Throws<ValueObjectException>(idValueObject.GetIdAsString);
+        Assert.Single(idValueObject.GetMethodResult().Notifications);
+        Assert.Equal(methodResult, idValueObject);
+        Assert.Equal(EXPECTED_CODE, idValueObject.GetMethodResult().Notifications[0].Code);
+        Assert.Equal(EXPECTED_MESSAGE, idValueObject.GetMethodResult().Notifications[0].Message);
+        Assert.Equal(EXPECTED_TYPE, idValueObject.GetMethodResult().Notifications[0].Type);
     }
 }

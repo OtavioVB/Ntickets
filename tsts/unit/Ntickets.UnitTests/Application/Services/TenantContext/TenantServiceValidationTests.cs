@@ -71,7 +71,7 @@ public sealed class TenantServiceValidationTests
 
         Assert.NotEmpty(serviceResult.Output.TenantId.GetIdAsString());
         Assert.NotEmpty(serviceResult.Output.Status.GetTenantStatusAsString());
-        Assert.NotEmpty(serviceResult.Output.LastModifiedAt.GetTimestampAsString());
+        Assert.NotEmpty(serviceResult.Output.CreatedAt.GetTimestampAsString());
         Assert.NotEmpty(serviceResult.Output.LastModifiedAt.GetTimestampAsString());
         Assert.Equal(input.FantasyName, serviceResult.Output.FantasyName);
         Assert.Equal(input.LegalName, serviceResult.Output.LegalName);
