@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "9eb1ee30-c732-466e-be9c-7b54fe5080d8",
+		"name": "Ntickets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24398126"
+	},
+	"item": [
+		{
+			"name": "Criar Tenant/Whitelabel",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "01J99BW8N5J2FATQ8AA9ZXVZ7H",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"phone\": \"{{phone}}\",\r\n    \"document\": \"{{document}}\",\r\n    \"legalName\": \"{{legalName}}\",\r\n    \"fantasyName\": \"{{fantasyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/api/v1/business-intelligence/tenants",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"business-intelligence",
+						"tenants"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Criado com sucesso",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Correlation-Id",
+								"value": "01J99BW8N5J2FATQ8AA9ZXVZ7H",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"phone\": \"{{phone}}\",\r\n    \"document\": \"{{document}}\",\r\n    \"legalName\": \"{{legalName}}\",\r\n    \"fantasyName\": \"{{fantasyName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/api/v1/business-intelligence/tenants",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business-intelligence",
+								"tenants"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"tenantId\": \"01J99CMFAG817FE3S3Z7RQKHBW\",\n    \"createdAt\": \"03-10-2024T14:30:38Z\",\n    \"status\": \"PENDING_ANALYSIS\",\n    \"fantasyName\": \"Otavioprod\",\n    \"legalName\": \"OTÁVIO CARMANINI\",\n    \"document\": \"54627477805\",\n    \"email\": \"otaviovb.developer@gmail.com\",\n    \"phone\": \"5511958523443\",\n    \"lastModifiedAt\": \"03-10-2024T14:30:38Z\",\n    \"notifications\": [\n        {\n            \"code\": \"CREATE_TENANT_HAS_BEEN_EXECUTED_SUCCESSFULL\",\n            \"message\": \"A criação do whitelabel foi executada com sucesso.\",\n            \"type\": \"Success\"\n        }\n    ]\n}"
+				},
+				{
+					"name": "Erro de Negócio",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Correlation-Id",
+								"value": "01J99BW8N5J2FATQ8AA9ZXVZ7H",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"phone\": \"{{phone}}\",\r\n    \"document\": \"{{document}}\",\r\n    \"legalName\": \"{{legalName}}\",\r\n    \"fantasyName\": \"{{fantasyName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/api/v1/business-intelligence/tenants",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business-intelligence",
+								"tenants"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"code\": \"TENANT_ALREADY_EXISTS\",\n        \"message\": \"O whitelabel já possui cadastro na base de dados.\",\n        \"type\": \"Error\"\n    }\n]"
+				}
+			]
+		}
+	]
+}
