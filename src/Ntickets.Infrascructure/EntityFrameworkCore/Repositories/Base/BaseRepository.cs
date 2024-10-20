@@ -1,22 +1,28 @@
 ﻿using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
+using Polly;
+using Polly.Retry;
 using System.Diagnostics;
+using System.Net.Sockets;
 
 namespace Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base;
 
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     where TEntity : class
 {
+    protected readonly ResiliencePipeline _resiliencePipeline;
     protected readonly DataContext _dataContext;
     protected readonly ITraceManager _traceManager;
 
     protected BaseRepository(
         DataContext dataContext,
-        ITraceManager traceManager)
+        ITraceManager traceManager,
+        ResiliencePipeline resiliencePipeline)
     {
         _dataContext = dataContext;
         _traceManager = traceManager;
+        _resiliencePipeline = resiliencePipeline;
     }
 
     public virtual Task AddAsync(TEntity entity, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
@@ -25,10 +31,11 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             activityKind: ActivityKind.Internal,
             input: entity,
             handler: (input, auditableInfo, activity, cancellationToken)
-                => _dataContext.Set<TEntity>().AddAsync(input, cancellationToken).AsTask(),
+                => _resiliencePipeline.ExecuteAsync(token => _dataContext.Set<TEntity>().AddAsync(input, cancellationToken)).AsTask(),
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
-            keyValuePairs: []);
+            keyValuePairs: []); 
+
     public virtual Task AddRangeAsync(TEntity[] entities, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
         => _traceManager.ExecuteTraceAsync(
             traceName: $"{nameof(BaseRepository<TEntity>)}.{nameof(AddAsync)}",

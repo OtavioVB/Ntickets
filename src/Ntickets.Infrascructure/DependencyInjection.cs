@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Infrascructure.EntityFrameworkCore;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories;
@@ -8,6 +9,10 @@ using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Retry;
+using Polly.Timeout;
 
 namespace Ntickets.Infrascructure;
 
@@ -67,13 +72,80 @@ public static class DependencyInjection
 
         #region Entity Framework Core Repositories Configuration
 
-        serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>();
-        serviceCollection.AddScoped<IExtensionTenantRepository, TenantRepository>();
+        var resiliencePipeline = FactoryRepositoryResiliencePipeline();
+
+        serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>((serviceProvider) 
+            => new TenantRepository(
+                dataContext: serviceProvider.GetRequiredService<DataContext>(),
+                traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
+                resiliencePipeline: resiliencePipeline));
+        serviceCollection.AddScoped<IExtensionTenantRepository, TenantRepository>((serviceProvider)
+            => new TenantRepository(
+                dataContext: serviceProvider.GetRequiredService<DataContext>(),
+                traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
+                resiliencePipeline: resiliencePipeline));
 
         #endregion
 
         #region RabbitMq Connection Configuration
 
         #endregion
+    }
+
+    private static ResiliencePipeline FactoryRepositoryResiliencePipeline()
+    {
+        var resiliencePipelineBuilder = new ResiliencePipelineBuilder();
+
+        var retryOptions = new RetryStrategyOptions()
+        {
+            ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+            MaxRetryAttempts = 3,
+            BackoffType = DelayBackoffType.Linear,
+            Delay = TimeSpan.FromMilliseconds(100),
+            OnRetry = (teste) =>
+            {
+                Console.WriteLine($"\n\n[TENTATIVA {teste.AttemptNumber}][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
+
+                return ValueTask.CompletedTask;
+            }
+        };
+
+        var timeoutOptions = new TimeoutStrategyOptions()
+        {
+            Timeout = TimeSpan.FromMilliseconds(5000)
+        };
+
+        var circuitBreakerOptions = new CircuitBreakerStrategyOptions()
+        {
+            OnOpened = (teste) =>
+            {
+                Console.WriteLine($"\n\n[CIRCUIT BREAKER ABERTO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
+
+                return ValueTask.CompletedTask;
+            },
+            BreakDuration = TimeSpan.FromSeconds(10),
+            OnHalfOpened = (teste) =>
+            {
+                Console.WriteLine($"\n\n[CIRCUIT BREAKER SEMI-ABERTO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
+
+                return ValueTask.CompletedTask;
+            },
+            OnClosed = (teste) =>
+            {
+                Console.WriteLine($"\n\n[CIRCUIT BREAKER FECHADO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
+
+                return ValueTask.CompletedTask;
+            },
+            ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+            FailureRatio = 0.2,
+            MinimumThroughput = 5
+        };
+
+        resiliencePipelineBuilder
+            .AddTimeout(timeoutOptions)
+            .AddRetry(retryOptions)
+            .AddCircuitBreaker(circuitBreakerOptions);
+
+        return resiliencePipelineBuilder.Build();
     }
 }
