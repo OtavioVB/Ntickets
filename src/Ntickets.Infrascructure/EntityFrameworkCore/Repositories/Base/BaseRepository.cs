@@ -31,7 +31,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             activityKind: ActivityKind.Internal,
             input: entity,
             handler: (input, auditableInfo, activity, cancellationToken)
-                => _resiliencePipeline.ExecuteAsync(token => _dataContext.Set<TEntity>().AddAsync(input, cancellationToken)).AsTask(),
+                => _resiliencePipeline.ExecuteAsync(cancellationToken => _dataContext.Set<TEntity>().AddAsync(input, cancellationToken)).AsTask(),
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
             keyValuePairs: []); 
@@ -53,7 +53,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             activityKind: ActivityKind.Internal,
             input: entity,
             handler: (input, auditableInfo, activity, cancellationToken)
-                => Task.Run(() => _dataContext.Set<TEntity>().Remove(entity), cancellationToken),
+                => Task.FromResult(_resiliencePipeline.Execute(() => _dataContext.Set<TEntity>().Remove(entity))),
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
             keyValuePairs: []);
@@ -63,8 +63,12 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             traceName: $"{nameof(BaseRepository<TEntity>)}.{nameof(AddAsync)}",
             activityKind: ActivityKind.Internal,
             input: entities,
-            handler: (input, auditableInfo, activity, cancellationToken)
-                => Task.Run(() => _dataContext.Set<TEntity>().RemoveRange(entities), cancellationToken),
+            handler: (input, auditableInfo, activity, cancellationToken) =>
+            {
+                _resiliencePipeline.Execute(() => _dataContext.Set<TEntity>().RemoveRange(entities));
+
+                return Task.CompletedTask;
+            },
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
             keyValuePairs: []);
@@ -75,7 +79,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             activityKind: ActivityKind.Internal,
             input: entity,
             handler: (input, auditableInfo, activity, cancellationToken)
-                => Task.Run(() => _dataContext.Set<TEntity>().Update(entity), cancellationToken),
+                => Task.FromResult(_resiliencePipeline.Execute(() => _dataContext.Set<TEntity>().Update(entity))),
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
             keyValuePairs: []);
@@ -85,8 +89,12 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             traceName: $"{nameof(BaseRepository<TEntity>)}.{nameof(AddAsync)}",
             activityKind: ActivityKind.Internal,
             input: entities,
-            handler: (input, auditableInfo, activity, cancellationToken)
-                => Task.Run(() => _dataContext.Set<TEntity>().UpdateRange(entities), cancellationToken),
+            handler: (input, auditableInfo, activity, cancellationToken) =>
+            {
+                _resiliencePipeline.Execute(() => _dataContext.Set<TEntity>().UpdateRange(entities));
+
+                return Task.CompletedTask;
+            },
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken,
             keyValuePairs: []);
