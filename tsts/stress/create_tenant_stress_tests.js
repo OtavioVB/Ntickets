@@ -23,7 +23,7 @@ export default function () {
         document: getRandomInt(10000000000,99999999999).toString()
     };
 
-    http.post('https://localhost:5000/api/v1/business-intelligence/tenants', JSON.stringify(data), {
+    http.post('http://localhost:5001/api/v1/business-intelligence/tenants', JSON.stringify(data), {
         headers: {
             'Content-Type': 'application/json',
             'X-Correlation-Id': `${getRandomInt(10000000000,99999999999).toString()}`
