@@ -172,8 +172,7 @@ jobs:
         dotnet ef database update --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
     - name: Executar Aplicação .NET 8
       run: |
-        dotnet dev-certs https --trust
-        dotnet dev-certs https --check
+        dotnet dev-certs https --check --trust
         dotnet build --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
         dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
     - name: Instalar k6
@@ -185,8 +184,6 @@ jobs:
         sudo apt-get install k6
     - name: Executar Testes de Carga com k6
       run: |
-        dotnet dev-certs https --trust
-        dotnet dev-certs https --check
         k6 run ./tsts/stress/create_tenant_stress_tests.js
     - name: Parar Aplicação
       run: |
