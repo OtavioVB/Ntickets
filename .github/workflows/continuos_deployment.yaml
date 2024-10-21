@@ -146,7 +146,7 @@ jobs:
     environment: Production
     needs:
       - sonar
-      - acceptance-application
+      - acceptance-tests
       - integration-tests
       - unit-tests
     steps:
