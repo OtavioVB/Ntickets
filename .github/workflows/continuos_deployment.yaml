@@ -156,10 +156,6 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 8.0.x
-    - name: Instalação das Dependências do .NET 6
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 6.0.x
     - name: Restaurar Dependências da Solução
       run: dotnet restore Ntickets.sln
     - name: Implantar Dependências do Docker
@@ -174,7 +170,6 @@ jobs:
       run: |
         dotnet dev-certs https --trust
         dotnet dev-certs https --check
-        dotnet build --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
         dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
     - name: Instalar k6
       run: |
