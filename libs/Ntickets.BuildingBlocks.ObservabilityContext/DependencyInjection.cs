@@ -1,15 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using Ntickets.BuildingBlocks.ObservabilityContext.Metrics;
+using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Wrappers;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Ntickets.BuildingBlocks.ObservabilityContext;
 
@@ -71,12 +75,12 @@ public static class DependencyInjection
                     q.Protocol = OtlpExportProtocol.Grpc;
                 });
             })
-            .WithTracing(p =>
+            .WithMetrics(p =>
             {
+                p.AddMeter(serviceName);
                 p.AddAspNetCoreInstrumentation();
                 p.AddHttpClientInstrumentation();
-                p.AddNpgsql();
-                p.AddSource(serviceName);
+                p.AddRuntimeInstrumentation();
                 p.AddOtlpExporter(q =>
                 {
                     q.ExportProcessorType = ExportProcessorType.Batch;
@@ -95,6 +99,16 @@ public static class DependencyInjection
                 activitySource: new ActivitySourceWrapper(
                     serviceName: serviceName,
                     serviceVersion: serviceVersion)));
+
+        #endregion
+
+        #region Metric Managers Dependencies Configuration
+
+        serviceCollection.AddSingleton<IMetricManager, MetricManager>((serviceProvider)
+            => new MetricManager(
+                meter: new Meter(
+                    name: serviceName,
+                    version: serviceVersion)));
 
         #endregion
     }

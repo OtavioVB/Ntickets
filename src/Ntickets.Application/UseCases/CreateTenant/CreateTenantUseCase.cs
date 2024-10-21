@@ -8,6 +8,7 @@ using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.EventContext.Builders;
 using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
+using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.Domain.BoundedContexts.EventContext.Events;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
@@ -21,13 +22,18 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
     private readonly ITraceManager _traceManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantService _tenantService;
+    private readonly IMetricManager _metricManager;
 
-    public CreateTenantUseCase(ITraceManager traceManager, IUnitOfWork unitOfWork, ITenantService tenantService)
+    public CreateTenantUseCase(ITraceManager traceManager, IUnitOfWork unitOfWork, ITenantService tenantService, IMetricManager metricManager)
     {
         _traceManager = traceManager;
         _unitOfWork = unitOfWork;
         _tenantService = tenantService;
+        _metricManager = metricManager;
     }
+
+    private const string COUNTER_NAME = "ntickets_create_tenant_usecase_count";
+    private const string COUNTER_INDICATIVE_SUCCESS_TAG = "success";
 
     public Task<MethodResult<INotification, CreateTenantUseCaseOutput>> ExecuteUseCaseAsync(CreateTenantUseCaseInput input, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
         => _traceManager.ExecuteTraceAsync(
@@ -52,6 +58,12 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
                         if (createTenantServiceResult.IsError)
                             return (false, MethodResult<INotification, CreateTenantUseCaseOutput>.FactoryError(
                                 notifications: createTenantServiceResult.Notifications));
+
+                        _metricManager.CreateIfNotExistsAndIncrementCounter(
+                            counterName: COUNTER_NAME,
+                            keyValuePairs: new KeyValuePair<string, object?>(
+                                key: COUNTER_INDICATIVE_SUCCESS_TAG,
+                                value: true));
 
                         return (true, MethodResult<INotification, CreateTenantUseCaseOutput>.FactorySuccess(
                             notifications: createTenantServiceResult.Notifications,

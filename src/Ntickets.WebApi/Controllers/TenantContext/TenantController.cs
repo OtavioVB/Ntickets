@@ -5,6 +5,7 @@ using Ntickets.Application.UseCases.Base;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
+using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.WebApi.Controllers.Base;
 using Ntickets.WebApi.Controllers.TenantContext.Payloads;
@@ -21,7 +22,7 @@ public sealed class TenantController : CustomizedControllerBase
 {
     private readonly ILogger<TenantController> _logger;
 
-    public TenantController(ILogger<TenantController> logger, ITraceManager traceManager) : base(traceManager)
+    public TenantController(ILogger<TenantController> logger, ITraceManager traceManager, IMetricManager metricManager) : base(traceManager, metricManager)
     {
         _logger = logger;
     }

@@ -19,10 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Metrics\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Ntickets.BuildingBlocks.AuditableInfoContext\Ntickets.BuildingBlocks.AuditableInfoContext.csproj" />
   </ItemGroup>
 
