@@ -141,7 +141,7 @@ jobs:
         dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
   stress-tests:
-    name: Testes de Estress
+    name: Testes de Carga/Estresse
     runs-on: ubuntu-latest
     environment: Production
     needs:
