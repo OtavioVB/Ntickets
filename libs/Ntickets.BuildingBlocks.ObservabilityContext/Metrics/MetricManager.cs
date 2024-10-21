@@ -1,4 +1,5 @@
 ﻿using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
+using System.Collections.Concurrent;
 using System.Diagnostics.Metrics;
 
 namespace Ntickets.BuildingBlocks.ObservabilityContext.Metrics;
@@ -6,12 +7,12 @@ namespace Ntickets.BuildingBlocks.ObservabilityContext.Metrics;
 public sealed class MetricManager : IMetricManager
 {
     private readonly Meter _meter;
-    private readonly IDictionary<string, Counter<int>> _countersDictionary;
+    private readonly ConcurrentDictionary<string, Counter<int>> _countersDictionary;
 
     public MetricManager(Meter meter)
     {
         _meter = meter;
-        _countersDictionary = new Dictionary<string, Counter<int>>();
+        _countersDictionary = new ConcurrentDictionary<string, Counter<int>>();
     }
 
     public void CreateIfNotExistsAndIncrementCounter(
@@ -29,7 +30,7 @@ public sealed class MetricManager : IMetricManager
         {
             var createdCounter = _meter.CreateCounter<int>(
                 name: counterName);
-            _countersDictionary.Add(
+            _countersDictionary.GetOrAdd(
                 key: counterName,
                 value: createdCounter);
             var counter = _countersDictionary[counterName];

@@ -40,7 +40,7 @@ public sealed class DefaultUnitOfWork : IUnitOfWork
             input: input,
             handler: async (input, auditableInfo, activity, cancellationToken) =>
             {
-
+                var transaction = await _dataContext.Database.BeginTransactionAsync(cancellationToken);
                 var handlerResponse = await handler(input, auditableInfo, cancellationToken);
 
                 activity.AddTag(
@@ -49,14 +49,14 @@ public sealed class DefaultUnitOfWork : IUnitOfWork
 
                 if (!handlerResponse.HasDone)
                 {
-
-
+                    await transaction.RollbackAsync(cancellationToken);
+                    _ = transaction.DisposeAsync();
                     return handlerResponse.Output;
                 }
                 else
                 {
-
-
+                    await transaction.CommitAsync(cancellationToken);
+                    _ = transaction.DisposeAsync();
                     return handlerResponse.Output;
                 }
             },
