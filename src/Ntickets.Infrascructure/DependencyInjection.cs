@@ -70,9 +70,28 @@ public static class DependencyInjection
 
         #endregion
 
-        #region Entity Framework Core Repositories Configuration
+        #region Repositories Resilience Policies Configuration
 
-        var resiliencePipeline = FactoryRepositoryResiliencePipeline();
+        const int MAX_RETRY_ATTEMPTS = 5;
+        const int DELAY_BETWEEN_RETRIES_IN_MS = 100;
+
+        const int TIMEOUT_DELAY_IN_MS = 5000;
+
+        const int CIRCUIT_BREAKER_DURATION_IN_MS = 10000;
+        const double CIRCUIT_BREAKER_FAILURE_RATIO = 0.25;
+        const int CIRCUIT_BREAKER_MINIMUM_THROUGHPUT = 50;
+
+        var resiliencePipeline = FactoryRepositoryResiliencePipeline(
+            maxRetryAttempts: MAX_RETRY_ATTEMPTS,
+            delayBetweenRetriesInMs: DELAY_BETWEEN_RETRIES_IN_MS,
+            timeoutInMs: TIMEOUT_DELAY_IN_MS,
+            circuitBreakerDurationInMs: CIRCUIT_BREAKER_DURATION_IN_MS,
+            circuitBreakerFailureRatio: CIRCUIT_BREAKER_FAILURE_RATIO,
+            circuitBreakerMinimumThroughput: CIRCUIT_BREAKER_MINIMUM_THROUGHPUT);
+
+        #endregion
+
+        #region Entity Framework Core Repositories Configuration
 
         serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>((serviceProvider) 
             => new TenantRepository(
@@ -92,53 +111,35 @@ public static class DependencyInjection
         #endregion
     }
 
-    private static ResiliencePipeline FactoryRepositoryResiliencePipeline()
+    private static ResiliencePipeline FactoryRepositoryResiliencePipeline(
+        int maxRetryAttempts,
+        int delayBetweenRetriesInMs,
+        int timeoutInMs,
+        int circuitBreakerDurationInMs,
+        double circuitBreakerFailureRatio,
+        int circuitBreakerMinimumThroughput)
     {
         var resiliencePipelineBuilder = new ResiliencePipelineBuilder();
 
         var retryOptions = new RetryStrategyOptions()
         {
             ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-            MaxRetryAttempts = 3,
+            MaxRetryAttempts = maxRetryAttempts,
             BackoffType = DelayBackoffType.Linear,
-            Delay = TimeSpan.FromMilliseconds(100),
-            OnRetry = (teste) =>
-            {
-                Console.WriteLine($"\n\n[TENTATIVA {teste.AttemptNumber}][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
-
-                return ValueTask.CompletedTask;
-            }
+            Delay = TimeSpan.FromMilliseconds(delayBetweenRetriesInMs)
         };
 
         var timeoutOptions = new TimeoutStrategyOptions()
         {
-            Timeout = TimeSpan.FromMilliseconds(5000)
+            Timeout = TimeSpan.FromMilliseconds(timeoutInMs)
         };
 
         var circuitBreakerOptions = new CircuitBreakerStrategyOptions()
         {
-            OnOpened = (teste) =>
-            {
-                Console.WriteLine($"\n\n[CIRCUIT BREAKER ABERTO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
-
-                return ValueTask.CompletedTask;
-            },
-            BreakDuration = TimeSpan.FromSeconds(10),
-            OnHalfOpened = (teste) =>
-            {
-                Console.WriteLine($"\n\n[CIRCUIT BREAKER SEMI-ABERTO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
-
-                return ValueTask.CompletedTask;
-            },
-            OnClosed = (teste) =>
-            {
-                Console.WriteLine($"\n\n[CIRCUIT BREAKER FECHADO][{DateTime.UtcNow.ToUniversalTime().ToString()}]\n\n");
-
-                return ValueTask.CompletedTask;
-            },
+            BreakDuration = TimeSpan.FromSeconds(circuitBreakerDurationInMs),
             ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-            FailureRatio = 0.2,
-            MinimumThroughput = 5
+            FailureRatio = circuitBreakerFailureRatio,
+            MinimumThroughput = circuitBreakerMinimumThroughput
         };
 
         resiliencePipelineBuilder
