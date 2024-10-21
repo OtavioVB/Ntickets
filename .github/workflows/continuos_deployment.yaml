@@ -70,16 +70,6 @@ jobs:
       run: |
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal ./tsts/functional/Ntickets.FunctionalTests/Ntickets.FunctionalTests.csproj
-    - name: Instalar k6
-      run: |
-        sudo gpg -k
-        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-        sudo apt-get update
-        sudo apt-get install k6
-    - name: Executar Testes de Carga com k6
-      run: |
-        k6 run ./tsts/stress/create_tenant_stress_tests.js
     - name: Parar Aplicação
       run: |
         kill $(cat pidfile)
@@ -150,3 +140,56 @@ jobs:
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  stress-tests:
+    name: Testes de Carga/Estresse
+    runs-on: ubuntu-latest
+    environment: Production
+    needs:
+      - sonar
+      - acceptance-tests
+      - integration-tests
+      - unit-tests
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Instalação das Dependências do .NET 6
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restaurar Dependências da Solução
+      run: dotnet restore Ntickets.sln
+    - name: Implantar Dependências do Docker
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
+    - name: Instalar Ferramenta de Migração do Banco de Dados
+      run: |
+        dotnet tool install --global dotnet-ef
+    - name: Aplicar Migração do Banco de Dados
+      run: |
+        dotnet ef database update --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
+    - name: Executar Aplicação .NET 8
+      run: |
+        dotnet dev-certs https --trust
+        dotnet dev-certs https --check
+        dotnet build --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
+        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
+    - name: Instalar k6
+      run: |
+        sudo gpg -k
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+    - name: Executar Testes de Carga com k6
+      run: |
+        k6 run --insecure-skip-tls-verify ./tsts/stress/create_tenant_stress_tests.js
+    - name: Parar Aplicação
+      run: |
+        kill $(cat pidfile)
+        rm pidfile
+    - name: Parar as Dependências do Docker
+      if: always() 
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
