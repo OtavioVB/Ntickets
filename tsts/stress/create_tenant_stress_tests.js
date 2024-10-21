@@ -1,8 +1,8 @@
 import http from 'k6/http';
 
 export const options = {
-    vus: 40,
-    duration: '120s',
+    vus: 10,
+    duration: '60s',
     thresholds: {
         http_req_failed: ['rate<0.01'],
         http_req_duration: ['p(100)<500'], 

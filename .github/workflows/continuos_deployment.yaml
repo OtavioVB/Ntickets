@@ -140,3 +140,52 @@ jobs:
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  stress-tests:
+    name: Testes de Estress
+    runs-on: ubuntu-latest
+    environment: Production
+    needs:
+      - sonar
+      - acceptance-application
+      - integration-tests
+      - unit-tests
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v3
+    - name: Instalação das Dependências do .NET 8
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+    - name: Instalação das Dependências do .NET 6
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restaurar Dependências da Solução
+      run: dotnet restore Ntickets.sln
+    - name: Implantar Dependências do Docker
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" up -d
+    - name: Instalar Ferramenta de Migração do Banco de Dados
+      run: |
+        dotnet tool install --global dotnet-ef
+    - name: Aplicar Migração do Banco de Dados
+      run: |
+        dotnet ef database update --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj"
+    - name: Executar Aplicação .NET 8
+      run: |
+        dotnet dev-certs https --trust
+        dotnet dev-certs https --check
+        dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
+    - name: Instalar k6
+      run: |
+        sudo apt update
+        sudo apt install -y k6
+    - name: Executar Testes de Carga com k6
+      run: |
+        k6 run ./tsts/stress/create_tenant_stress_tests.js
+    - name: Parar Aplicação
+      run: |
+        kill $(cat pidfile)
+        rm pidfile
+    - name: Parar as Dependências do Docker
+      if: always() 
+      run: docker compose -f "./devops/local/docker-compose.Local.yaml" down
