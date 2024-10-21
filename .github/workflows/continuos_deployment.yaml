@@ -177,8 +177,8 @@ jobs:
         dotnet run --project "./src/Ntickets.WebApi/Ntickets.WebApi.csproj" & echo $! > pidfile
     - name: Instalar k6
       run: |
-        sudo apt update
-        sudo apt install -y k6
+        sudo apt-get update
+        sudo apt-get install k6
     - name: Executar Testes de Carga com k6
       run: |
         k6 run ./tsts/stress/create_tenant_stress_tests.js
