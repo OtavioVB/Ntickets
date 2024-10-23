@@ -13,6 +13,12 @@ using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
 using Polly.Timeout;
+using Ntickets.BuildingBlocks.ResilienceContext;
+using Ntickets.BuildingBlocks.ResilienceContext.Options;
+using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
+using System.Net.Sockets;
+using System.Collections.Immutable;
+using Npgsql;
 
 namespace Ntickets.Infrascructure;
 
@@ -64,89 +70,69 @@ public static class DependencyInjection
 
         #endregion
 
-        #region Entity Framework Core UnitOfWork Configuration
-
-        serviceCollection.AddScoped<IUnitOfWork, DefaultUnitOfWork>();
-
-        #endregion
-
-        #region Repositories Resilience Policies Configuration
-
-        const int MAX_RETRY_ATTEMPTS = 5;
-        const int DELAY_BETWEEN_RETRIES_IN_MS = 100;
-
-        const int TIMEOUT_DELAY_IN_MS = 5000;
-
-        const int CIRCUIT_BREAKER_DURATION_IN_MS = 10000;
-        const double CIRCUIT_BREAKER_FAILURE_RATIO = 0.25;
-        const int CIRCUIT_BREAKER_MINIMUM_THROUGHPUT = 50;
-
-        var resiliencePipeline = FactoryRepositoryResiliencePipeline(
-            maxRetryAttempts: MAX_RETRY_ATTEMPTS,
-            delayBetweenRetriesInMs: DELAY_BETWEEN_RETRIES_IN_MS,
-            timeoutInMs: TIMEOUT_DELAY_IN_MS,
-            circuitBreakerDurationInMs: CIRCUIT_BREAKER_DURATION_IN_MS,
-            circuitBreakerFailureRatio: CIRCUIT_BREAKER_FAILURE_RATIO,
-            circuitBreakerMinimumThroughput: CIRCUIT_BREAKER_MINIMUM_THROUGHPUT);
-
-        #endregion
-
         #region Entity Framework Core Repositories Configuration
 
-        serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>((serviceProvider) 
+        const string ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME = nameof(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME);
+
+        serviceCollection.AddKeyedResiliencePipelineWrapper(
+            definitionName: ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME,
+            optionsAction: (options) =>
+            {
+                var exceptionsMustBeHandledCollection = new Type[]
+                    {
+                        typeof(SocketException),
+                        typeof(PostgresException),
+                        typeof(NpgsqlException),
+                        typeof(TimeoutException),
+                        typeof(InvalidOperationException)
+                    }.ToImmutableArray();
+
+                options.TimeoutOptions = new ResiliencePipelineTimeoutWrapperOptions()
+                {
+                    Timeout = TimeSpan.FromSeconds(20)
+                };
+
+                options.RetryOptions = new ResiliencePipelineRetryWrapperOptions()
+                {
+                    MaxRetryAttempts = 5,
+                    DelayBetweenRetriesInMiliseconds = 250,
+                    HandleExceptionsCollection = exceptionsMustBeHandledCollection
+                };
+
+                options.CircuitBreakerOptions = new ResiliencePipelineCircuitBreakerWrapperOptions()
+                {
+                    BreakDurationInSeconds = 5,
+                    MinimumThroughput = 50,
+                    FailureRatio = 0.10,
+                    HandleExceptionsCollection = exceptionsMustBeHandledCollection
+                };
+            });
+
+        serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>((serviceProvider)
             => new TenantRepository(
                 dataContext: serviceProvider.GetRequiredService<DataContext>(),
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
-                resiliencePipeline: resiliencePipeline));
+                resiliencePipeline: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME)));
         serviceCollection.AddScoped<IExtensionTenantRepository, TenantRepository>((serviceProvider)
             => new TenantRepository(
                 dataContext: serviceProvider.GetRequiredService<DataContext>(),
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
-                resiliencePipeline: resiliencePipeline));
+                resiliencePipeline: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME)));
+
+        #endregion
+
+        #region Entity Framework Core UnitOfWork Configuration
+
+        serviceCollection.AddScoped<IUnitOfWork, DefaultUnitOfWork>((serviceProvider)
+            => new DefaultUnitOfWork(
+                traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
+                dataContext: serviceProvider.GetRequiredService<DataContext>(),
+                resiliencePipelineWrapper: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME)));
 
         #endregion
 
         #region RabbitMq Connection Configuration
 
         #endregion
-    }
-
-    private static ResiliencePipeline FactoryRepositoryResiliencePipeline(
-        int maxRetryAttempts,
-        int delayBetweenRetriesInMs,
-        int timeoutInMs,
-        int circuitBreakerDurationInMs,
-        double circuitBreakerFailureRatio,
-        int circuitBreakerMinimumThroughput)
-    {
-        var resiliencePipelineBuilder = new ResiliencePipelineBuilder();
-
-        var retryOptions = new RetryStrategyOptions()
-        {
-            ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-            MaxRetryAttempts = maxRetryAttempts,
-            BackoffType = DelayBackoffType.Linear,
-            Delay = TimeSpan.FromMilliseconds(delayBetweenRetriesInMs)
-        };
-
-        var timeoutOptions = new TimeoutStrategyOptions()
-        {
-            Timeout = TimeSpan.FromMilliseconds(timeoutInMs)
-        };
-
-        var circuitBreakerOptions = new CircuitBreakerStrategyOptions()
-        {
-            BreakDuration = TimeSpan.FromSeconds(circuitBreakerDurationInMs),
-            ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-            FailureRatio = circuitBreakerFailureRatio,
-            MinimumThroughput = circuitBreakerMinimumThroughput
-        };
-
-        resiliencePipelineBuilder
-            .AddTimeout(timeoutOptions)
-            .AddRetry(retryOptions)
-            .AddCircuitBreaker(circuitBreakerOptions);
-
-        return resiliencePipelineBuilder.Build();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
+using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
 using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
@@ -11,7 +12,7 @@ namespace Ntickets.Infrascructure.EntityFrameworkCore.Repositories;
 
 public sealed class TenantRepository : BaseRepository<Tenant>, IExtensionTenantRepository
 {
-    public TenantRepository(DataContext dataContext, ITraceManager traceManager, ResiliencePipeline resiliencePipeline) : base(dataContext, traceManager, resiliencePipeline)
+    public TenantRepository(DataContext dataContext, ITraceManager traceManager, IResiliencePipelineWrapper resiliencePipeline) : base(dataContext, traceManager, resiliencePipeline)
     {
     }
 
@@ -21,7 +22,7 @@ public sealed class TenantRepository : BaseRepository<Tenant>, IExtensionTenantR
             activityKind: ActivityKind.Internal,
             input: document,
             handler: (input, auditableInfo, activity, cancellationToken)
-                => _resiliencePipeline.ExecuteAsync(async (input, cancellationToken) => await _dataContext.Set<Tenant>().AsNoTracking().Where(p => p.Document == input).AnyAsync(cancellationToken), 
+                => _resiliencePipeline.GetResiliencePipeline().ExecuteAsync(async (input, cancellationToken) => await _dataContext.Set<Tenant>().AsNoTracking().Where(p => p.Document == input).AnyAsync(cancellationToken), 
                     state: input,
                     cancellationToken: cancellationToken).AsTask(),
             auditableInfo: auditableInfo,

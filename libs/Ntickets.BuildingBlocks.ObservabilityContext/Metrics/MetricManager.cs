@@ -21,20 +21,11 @@ public sealed class MetricManager : IMetricManager
     {
         const int INCREMENT_COUNT = 1;
 
-        if (_countersDictionary.ContainsKey(counterName))
-        {
-            var counter = _countersDictionary[counterName];
-            counter.Add(INCREMENT_COUNT, keyValuePairs);
-        }
-        else
-        {
-            var createdCounter = _meter.CreateCounter<int>(
-                name: counterName);
-            _countersDictionary.GetOrAdd(
-                key: counterName,
-                value: createdCounter);
-            var counter = _countersDictionary[counterName];
-            counter.Add(INCREMENT_COUNT, keyValuePairs);
-        }
+        var createdCounter = _meter.CreateCounter<int>(
+            name: counterName);
+        var counter = _countersDictionary.GetOrAdd(
+            key: counterName,
+            value: createdCounter);
+        counter.Add(INCREMENT_COUNT, keyValuePairs);
     }
 }
