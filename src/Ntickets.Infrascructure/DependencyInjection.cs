@@ -89,7 +89,7 @@ public static class DependencyInjection
 
                 options.TimeoutOptions = new ResiliencePipelineTimeoutWrapperOptions()
                 {
-                    Timeout = TimeSpan.FromSeconds(20)
+                    Timeout = TimeSpan.FromSeconds(5)
                 };
 
                 options.RetryOptions = new ResiliencePipelineRetryWrapperOptions()
