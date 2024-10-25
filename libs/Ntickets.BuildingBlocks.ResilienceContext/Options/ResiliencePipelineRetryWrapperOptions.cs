@@ -20,5 +20,5 @@ public class ResiliencePipelineRetryWrapperOptions
     }
 
     public TimeSpan GetDelayBetweenRetries()
-        => TimeSpan.FromSeconds(DelayBetweenRetriesInMiliseconds);  
+        => TimeSpan.FromMilliseconds(DelayBetweenRetriesInMiliseconds);  
 }

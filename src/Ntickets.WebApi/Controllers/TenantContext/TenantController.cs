@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Ntickets.Application.UseCases.Base;
+using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;

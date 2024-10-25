@@ -2,6 +2,7 @@ using Ntickets.Infrascructure;
 using Ntickets.Application;
 using Ntickets.BuildingBlocks.ObservabilityContext;
 using Microsoft.OpenApi.Models;
+using Microsoft.FeatureManagement;
 
 namespace Ntickets.WebApi;
 
@@ -13,16 +14,8 @@ public sealed class Program
 
         builder.Services.AddControllers();
 
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc(
-                name: builder.Configuration["ApplicationNamespace"]!,
-                info: new OpenApiInfo()
-                {
-                    Title = builder.Configuration["ApplicationNamespace"]!,
-                    Version = builder.Configuration["ApplicationVersion"]!
-                });
-        });
+        builder.Services.AddFeatureManagement(
+            configuration: builder.Configuration);
 
         builder.Logging.ClearProviders();
 
@@ -59,12 +52,6 @@ public sealed class Program
         var app = builder.Build();
 
         app.UseHttpsRedirection();
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.DocumentTitle = builder.Configuration["ApplicationNamespace"]!;
-            options.DisplayRequestDuration();
-        });
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

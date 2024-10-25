@@ -2,7 +2,7 @@
 using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 
-namespace Ntickets.Application.UseCases.Base;
+namespace Ntickets.Application.UseCases.Base.Interfaces;
 
 public interface IUseCase<TInput, TOutput>
 {

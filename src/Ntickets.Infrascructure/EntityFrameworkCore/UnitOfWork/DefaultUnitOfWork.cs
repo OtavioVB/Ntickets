@@ -49,7 +49,7 @@ public sealed class DefaultUnitOfWork : IUnitOfWork
             input: input,
             handler: async (input, auditableInfo, activity, cancellationToken) => 
             {
-                var transaction = await BeginTransactionResilientAsync(cancellationToken);
+                //var transaction = await BeginTransactionResilientAsync(cancellationToken);
                 var handlerResponse = await handler(input, auditableInfo, cancellationToken);
 
                 activity.AddTag(
@@ -58,14 +58,14 @@ public sealed class DefaultUnitOfWork : IUnitOfWork
 
                 if (!handlerResponse.HasDone)
                 {
-                    await RollbackTransactionResilientAsync(transaction, cancellationToken);
-                    _ = transaction.DisposeAsync();
+                    //await RollbackTransactionResilientAsync(transaction, cancellationToken);
+                    //_ = transaction.DisposeAsync();
                     return handlerResponse.Output;
                 }
                 else
                 {
-                    await CommitTransactionResilientAsync(transaction, cancellationToken);
-                    _ = transaction.DisposeAsync();
+                    //await CommitTransactionResilientAsync(transaction, cancellationToken);
+                    //_ = transaction.DisposeAsync();
                     return handlerResponse.Output;
                 }
             },
@@ -83,13 +83,13 @@ public sealed class DefaultUnitOfWork : IUnitOfWork
                 cancellationToken: cancellationToken);
 
     private ValueTask RollbackTransactionResilientAsync(IDbContextTransaction transaction, CancellationToken cancellationToken)
-        => _resiliencePipelineWrapper.GetResiliencePipeline().ExecuteAsync(async (transaction, cancellationToken)
+        => _resiliencePipelineWrapper.GetResiliencePipeline().ExecuteAsync<IDbContextTransaction>(async (transaction, cancellationToken)
             => await transaction.RollbackAsync(cancellationToken),
                 state: transaction,
                 cancellationToken: cancellationToken);
 
-    private Task<IDbContextTransaction> BeginTransactionResilientAsync(CancellationToken cancellationToken)
+    private ValueTask<IDbContextTransaction> BeginTransactionResilientAsync(CancellationToken cancellationToken)
         => _resiliencePipelineWrapper.GetResiliencePipeline().ExecuteAsync(
             callback: async (cancellationToken) => await _dataContext.Database.BeginTransactionAsync(cancellationToken),
-            cancellationToken: cancellationToken).AsTask();
+            cancellationToken: cancellationToken);
 }

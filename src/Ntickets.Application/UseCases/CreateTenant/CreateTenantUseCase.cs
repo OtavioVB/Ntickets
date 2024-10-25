@@ -1,12 +1,16 @@
-﻿using Ntickets.Application.Events.Base.Interfaces;
+﻿using Microsoft.FeatureManagement;
+using Ntickets.Application.Events.Base.Interfaces;
 using Ntickets.Application.Services.TenantContext.Inputs;
 using Ntickets.Application.Services.TenantContext.Interfaces;
 using Ntickets.Application.UseCases.Base;
+using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.EventContext.Builders;
 using Ntickets.BuildingBlocks.MethodResultsContext;
+using Ntickets.BuildingBlocks.NotificationContext;
+using Ntickets.BuildingBlocks.NotificationContext.Builders;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
@@ -17,14 +21,20 @@ using System.Diagnostics;
 
 namespace Ntickets.Application.UseCases.CreateTenant;
 
-public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, CreateTenantUseCaseOutput>
+public sealed class CreateTenantUseCase : UseCaseFeatureManagedBase, IUseCase<CreateTenantUseCaseInput, CreateTenantUseCaseOutput>
 {
     private readonly ITraceManager _traceManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantService _tenantService;
     private readonly IMetricManager _metricManager;
 
-    public CreateTenantUseCase(ITraceManager traceManager, IUnitOfWork unitOfWork, ITenantService tenantService, IMetricManager metricManager)
+    public CreateTenantUseCase(
+        ITraceManager traceManager, 
+        IUnitOfWork unitOfWork, 
+        ITenantService tenantService, 
+        IMetricManager metricManager,
+        IFeatureManager featureManager)
+        : base(featureManager)
     {
         _traceManager = traceManager;
         _unitOfWork = unitOfWork;
@@ -32,10 +42,15 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
         _metricManager = metricManager;
     }
 
-    private const string COUNTER_NAME = "ntickets_create_tenant_usecase_count";
-    private const string COUNTER_INDICATIVE_SUCCESS_TAG = "success";
+    private const string USE_CASE_COUNTER_NAME = "ntickets_create_tenant_usecase_count";
+    private const string USE_CASE_COUNTER_INDICATIVE_SUCCESS_TAG = "success";
 
-    public Task<MethodResult<INotification, CreateTenantUseCaseOutput>> ExecuteUseCaseAsync(CreateTenantUseCaseInput input, AuditableInfoValueObject auditableInfo, CancellationToken cancellationToken)
+    protected override string FeatureFlagName => nameof(CreateTenantUseCase);
+
+    public Task<MethodResult<INotification, CreateTenantUseCaseOutput>> ExecuteUseCaseAsync(
+        CreateTenantUseCaseInput input, 
+        AuditableInfoValueObject auditableInfo, 
+        CancellationToken cancellationToken)
         => _traceManager.ExecuteTraceAsync(
             traceName: $"{nameof(CreateTenantUseCase)}.{nameof(ExecuteUseCaseAsync)}",
             activityKind: ActivityKind.Internal,
@@ -45,6 +60,19 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
                     input: input,
                     handler: async (input, auditableInfo, cancellationToken) =>
                     {
+                        if (!await CanHandleFeatureAsync())
+                        {
+                            const string CREATE_TENANT_USE_CASE_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_CODE = "CREATE_TENANT_USE_CASE_FEATURE_FLAG_IS_NOT_ENABLED";
+                            const string CREATE_TENANT_USE_CASE_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_MESSAGE = "A funcionalidade de criação do contratante não está habilitada.";
+
+                            return (false, MethodResult<INotification, CreateTenantUseCaseOutput>.FactoryError(
+                                notifications: [
+                                    NotificationBuilder.BuildErrorNotification(
+                                        code: CREATE_TENANT_USE_CASE_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_CODE,
+                                        message: CREATE_TENANT_USE_CASE_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_MESSAGE)
+                                    ]));
+                        }
+
                         var createTenantServiceResult = await _tenantService.CreateTenantServiceAsync(
                             input: CreateTenantServiceInput.Factory(
                                 fantasyName: input.FantasyName,
@@ -60,9 +88,9 @@ public sealed class CreateTenantUseCase : IUseCase<CreateTenantUseCaseInput, Cre
                                 notifications: createTenantServiceResult.Notifications));
 
                         _metricManager.CreateIfNotExistsAndIncrementCounter(
-                            counterName: COUNTER_NAME,
+                            counterName: USE_CASE_COUNTER_NAME,
                             keyValuePairs: new KeyValuePair<string, object?>(
-                                key: COUNTER_INDICATIVE_SUCCESS_TAG,
+                                key: USE_CASE_COUNTER_INDICATIVE_SUCCESS_TAG,
                                 value: true));
 
                         return (true, MethodResult<INotification, CreateTenantUseCaseOutput>.FactorySuccess(

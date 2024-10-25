@@ -89,7 +89,7 @@ public static class DependencyInjection
 
                 options.TimeoutOptions = new ResiliencePipelineTimeoutWrapperOptions()
                 {
-                    Timeout = TimeSpan.FromSeconds(5)
+                    Timeout = TimeSpan.FromSeconds(20)
                 };
 
                 options.RetryOptions = new ResiliencePipelineRetryWrapperOptions()
@@ -128,10 +128,6 @@ public static class DependencyInjection
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
                 dataContext: serviceProvider.GetRequiredService<DataContext>(),
                 resiliencePipelineWrapper: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME)));
-
-        #endregion
-
-        #region RabbitMq Connection Configuration
 
         #endregion
     }

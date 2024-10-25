@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Ntickets.Application.Services.TenantContext;
 using Ntickets.Application.Services.TenantContext.Interfaces;
-using Ntickets.Application.UseCases.Base;
+using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;

@@ -6,6 +6,7 @@ using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
 using Polly.Timeout;
+using System.Linq;
 
 namespace Ntickets.BuildingBlocks.ResilienceContext.Wrappers;
 
@@ -32,12 +33,16 @@ public sealed class ResiliencePipelineWrapper : IResiliencePipelineWrapper
             MaxRetryAttempts = options.RetryOptions.MaxRetryAttempts,
             Delay = options.RetryOptions.GetDelayBetweenRetries(),
             BackoffType = DelayBackoffType.Linear,
-            ShouldHandle = (exception) => new ValueTask<bool>(options.RetryOptions.HandleExceptionsCollection.Contains(exception.GetType())),
+            ShouldHandle = (exception) => new ValueTask<bool>(options.CircuitBreakerOptions.HandleExceptionsCollection.Any(p => p == exception.Outcome.Exception?.GetType())),
+            OnRetry = (context) => { 
+                logger.LogError($"\n\nTENTATIVA {context.AttemptNumber}\n\n"); 
+                return ValueTask.CompletedTask; 
+            } 
         };
 
         var circuitBreakerOptions = new CircuitBreakerStrategyOptions()
         {
-            ShouldHandle = (exception) => new ValueTask<bool>(options.CircuitBreakerOptions.HandleExceptionsCollection.Contains(exception.GetType())),
+            ShouldHandle = (exception) => new ValueTask<bool>(options.CircuitBreakerOptions.HandleExceptionsCollection.Any(p => p == exception.Outcome.Exception?.GetType())),
             BreakDuration = options.CircuitBreakerOptions.GetBreakDuration(),
             FailureRatio = options.CircuitBreakerOptions.FailureRatio,
             MinimumThroughput = options.CircuitBreakerOptions.MinimumThroughput
