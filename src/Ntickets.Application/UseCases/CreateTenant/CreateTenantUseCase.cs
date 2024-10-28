@@ -1,4 +1,5 @@
 ﻿using Microsoft.FeatureManagement;
+using Ntickets.Application.Events;
 using Ntickets.Application.Events.Base.Interfaces;
 using Ntickets.Application.Services.TenantContext.Inputs;
 using Ntickets.Application.Services.TenantContext.Interfaces;
@@ -27,19 +28,22 @@ public sealed class CreateTenantUseCase : UseCaseFeatureManagedBase, IUseCase<Cr
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantService _tenantService;
     private readonly IMetricManager _metricManager;
+    private readonly IEventService<CreateTenantEvent> _eventService;
 
     public CreateTenantUseCase(
         ITraceManager traceManager, 
         IUnitOfWork unitOfWork, 
         ITenantService tenantService, 
         IMetricManager metricManager,
-        IFeatureManager featureManager)
+        IFeatureManager featureManager,
+        IEventService<CreateTenantEvent> eventService)
         : base(featureManager)
     {
         _traceManager = traceManager;
         _unitOfWork = unitOfWork;
         _tenantService = tenantService;
         _metricManager = metricManager;
+        _eventService = eventService;
     }
 
     private const string USE_CASE_COUNTER_NAME = "ntickets_create_tenant_usecase_count";
@@ -92,6 +96,22 @@ public sealed class CreateTenantUseCase : UseCaseFeatureManagedBase, IUseCase<Cr
                             keyValuePairs: new KeyValuePair<string, object?>(
                                 key: USE_CASE_COUNTER_INDICATIVE_SUCCESS_TAG,
                                 value: true));
+
+                        await _eventService.PublishEventAsync(
+                            @event: new CreateTenantEvent(
+                                tenantId: createTenantServiceResult.Output.TenantId,
+                                createdAt: createTenantServiceResult.Output.CreatedAt,
+                                fantasyName: createTenantServiceResult.Output.FantasyName,
+                                legalName: createTenantServiceResult.Output.LegalName,
+                                document: createTenantServiceResult.Output.Document,
+                                email: createTenantServiceResult.Output.Email,
+                                phone: createTenantServiceResult.Output.Phone,
+                                status: createTenantServiceResult.Output.Status,
+                                lastModifiedAt: createTenantServiceResult.Output.LastModifiedAt,
+                                eventName: CreateTenantEventService.EventName,
+                                correlationId: auditableInfo.GetCorrelationId()),
+                            auditableInfo: auditableInfo,
+                            cancellationToken: cancellationToken);
 
                         return (true, MethodResult<INotification, CreateTenantUseCaseOutput>.FactorySuccess(
                             notifications: createTenantServiceResult.Notifications,

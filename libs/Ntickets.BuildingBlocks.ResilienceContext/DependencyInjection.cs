@@ -16,8 +16,24 @@ public static class DependencyInjection
 
         optionsAction(options);
 
-        serviceCollection.AddKeyedScoped<IResiliencePipelineWrapper, ResiliencePipelineWrapper>(
+        serviceCollection.AddKeyedSingleton<IResiliencePipelineWrapper, ResiliencePipelineWrapper>(
             serviceKey: definitionName, 
+            implementationFactory: (serviceProvider, serviceKey)
+                => ResiliencePipelineWrapper.Build(
+                    resiliencePipelineDefinitionName: definitionName,
+                    serviceProvider: serviceProvider,
+                    options: options));
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddKeyedResiliencePipelineWrapper(
+        this IServiceCollection serviceCollection,
+        string definitionName,
+        ResiliencePipelineWrapperOptions options)
+    {
+        serviceCollection.AddKeyedSingleton<IResiliencePipelineWrapper, ResiliencePipelineWrapper>(
+            serviceKey: definitionName,
             implementationFactory: (serviceProvider, serviceKey)
                 => ResiliencePipelineWrapper.Build(
                     resiliencePipelineDefinitionName: definitionName,

@@ -58,7 +58,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stress", "stress", "{2C95C1
 		tsts\stress\create_tenant_stress_tests.js = tsts\stress\create_tenant_stress_tests.js
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntickets.BuildingBlocks.ResilienceContext", "libs\Ntickets.BuildingBlocks.ResilienceContext\Ntickets.BuildingBlocks.ResilienceContext.csproj", "{A37150F6-BD91-47A7-979A-C6A40C2A022D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ntickets.BuildingBlocks.ResilienceContext", "libs\Ntickets.BuildingBlocks.ResilienceContext\Ntickets.BuildingBlocks.ResilienceContext.csproj", "{A37150F6-BD91-47A7-979A-C6A40C2A022D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchs", "benchs", "{42EA70FA-F6CE-40D4-B33C-3B92D5FDF95F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalDiscordInfo", "benchs\SignalDiscordInfo\SignalDiscordInfo.csproj", "{6079EB77-DFC8-4562-AAB0-E6BFC2727D28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +122,10 @@ Global
 		{A37150F6-BD91-47A7-979A-C6A40C2A022D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A37150F6-BD91-47A7-979A-C6A40C2A022D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A37150F6-BD91-47A7-979A-C6A40C2A022D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6079EB77-DFC8-4562-AAB0-E6BFC2727D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6079EB77-DFC8-4562-AAB0-E6BFC2727D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6079EB77-DFC8-4562-AAB0-E6BFC2727D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6079EB77-DFC8-4562-AAB0-E6BFC2727D28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +147,7 @@ Global
 		{4D69B522-D543-4FB6-ADFB-CF6FFE457776} = {1CD7D9BE-6327-4100-A5A9-19F990057DED}
 		{2C95C1C0-4F5D-4189-8228-9FDF3BE659BD} = {1CD7D9BE-6327-4100-A5A9-19F990057DED}
 		{A37150F6-BD91-47A7-979A-C6A40C2A022D} = {491C0E84-0EDB-4F3B-AA3B-2DDAA14F9D11}
+		{6079EB77-DFC8-4562-AAB0-E6BFC2727D28} = {42EA70FA-F6CE-40D4-B33C-3B92D5FDF95F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {152FAC3D-1AF3-4FAB-BF94-CA91A3091897}

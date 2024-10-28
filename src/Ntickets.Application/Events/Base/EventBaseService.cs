@@ -17,8 +17,6 @@ public abstract class EventBaseService<TEvent> : IEventService<TEvent>
         _traceManager = traceManager;
     }
 
-    protected abstract string EventName { get; }
-
     public abstract Task PublishEventAsync(
         TEvent @event,
         AuditableInfoValueObject auditableInfo,

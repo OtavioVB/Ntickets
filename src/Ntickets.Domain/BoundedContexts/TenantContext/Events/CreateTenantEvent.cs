@@ -1,8 +1,9 @@
-﻿using Ntickets.Domain.BoundedContexts.TenantContext.Enumerators;
+﻿using Ntickets.Domain.BoundedContexts.EventBase;
+using Ntickets.Domain.BoundedContexts.TenantContext.Enumerators;
 
 namespace Ntickets.Domain.BoundedContexts.EventContext.Events;
 
-public sealed record CreateTenantEvent
+public sealed record CreateTenantEvent : EventDomainBase
 {
     public string TenantId { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -15,7 +16,7 @@ public sealed record CreateTenantEvent
     public DateTime LastModifiedAt { get; set; }
 
     public CreateTenantEvent(string tenantId, DateTime createdAt, string fantasyName, string legalName, string document, string email,
-        string phone, EnumTenantStatus status, DateTime lastModifiedAt)
+        string phone, EnumTenantStatus status, DateTime lastModifiedAt, string eventName, string correlationId) : base(eventName, correlationId)
     {
         TenantId = tenantId;
         CreatedAt = createdAt;

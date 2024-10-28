@@ -5,7 +5,7 @@ namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
 public class ResiliencePipelineCircuitBreakerWrapperOptions
 {
     public int BreakDurationInSeconds { get; set; }
-    public ImmutableArray<Type> HandleExceptionsCollection { get; set; }
+    public string[] HandleExceptionsCollection { get; set; } = [];
     public double FailureRatio { get; set; }
     public int MinimumThroughput { get; set; }
 
@@ -13,7 +13,7 @@ public class ResiliencePipelineCircuitBreakerWrapperOptions
     {
     }
 
-    public ResiliencePipelineCircuitBreakerWrapperOptions(int breakDurationInSeconds, ImmutableArray<Type> handleExceptionsCollection, double failureRatio, int minimumThroughput)
+    public ResiliencePipelineCircuitBreakerWrapperOptions(int breakDurationInSeconds, string[] handleExceptionsCollection, double failureRatio, int minimumThroughput)
     {
         BreakDurationInSeconds = breakDurationInSeconds;
         HandleExceptionsCollection = handleExceptionsCollection;

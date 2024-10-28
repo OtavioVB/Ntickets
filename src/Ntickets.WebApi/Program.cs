@@ -3,6 +3,7 @@ using Ntickets.Application;
 using Ntickets.BuildingBlocks.ObservabilityContext;
 using Microsoft.OpenApi.Models;
 using Microsoft.FeatureManagement;
+using Ntickets.BuildingBlocks.ResilienceContext.Options;
 
 namespace Ntickets.WebApi;
 
@@ -39,13 +40,14 @@ public sealed class Program
 
         #endregion
 
+        var databaseResilienceOptions = builder.Configuration.GetRequiredSection("Infrascructure:Database:ResiliencePolicy").Get<ResiliencePipelineWrapperOptions>();
+        var apacheKafkaResilienceOptions = builder.Configuration.GetRequiredSection("Infrascructure:Messenger:ApacheKafka:ResiliencePolicy").Get<ResiliencePipelineWrapperOptions>();
+
         builder.Services.ApplyInfrascructureDependenciesConfiguration(
             connectionString: builder.Configuration["Infrascructure:Database:PostgreeSQL:ConnectionString"]!,
-            rabbitMqConnectionUserName: builder.Configuration["Infrascructure:Messenger:RabbitMq:UserName"]!,
-            rabbitMqConnectionPassword: builder.Configuration["Infrascructure:Messenger:RabbitMq:Password"]!,
-            rabbitMqConnectionVirtualHost: builder.Configuration["Infrascructure:Messenger:RabbitMq:VirtualHost"]!,
-            rabbitMqConnectionHostName: builder.Configuration["Infrascructure:Messenger:RabbitMq:HostName"]!,
-            rabbitMqConnectionClientProviderName: builder.Configuration["ApplicationName"]!);
+            databaseResiliencePolicyOptions: databaseResilienceOptions!,
+            apacheKafkaResilienceOptions: apacheKafkaResilienceOptions!,
+            apacheKafkaServer: builder.Configuration["Infrascructure:Messenger:ApacheKafka:Host"]!);
 
         builder.Services.ApplyApplicationDependenciesConfiguration();
 

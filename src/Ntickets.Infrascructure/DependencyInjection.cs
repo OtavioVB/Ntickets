@@ -27,11 +27,9 @@ public static class DependencyInjection
     public static void ApplyInfrascructureDependenciesConfiguration(
         this IServiceCollection serviceCollection,
         string connectionString,
-        string rabbitMqConnectionUserName, 
-        string rabbitMqConnectionPassword,
-        string rabbitMqConnectionVirtualHost,
-        string rabbitMqConnectionHostName,
-        string rabbitMqConnectionClientProviderName,
+        ResiliencePipelineWrapperOptions databaseResiliencePolicyOptions,
+        ResiliencePipelineWrapperOptions apacheKafkaResilienceOptions,
+        string apacheKafkaServer,
         bool configureDbContextInMemory = false)
     {
         #region Entity Framework Core DbContext Configuration
@@ -76,37 +74,7 @@ public static class DependencyInjection
 
         serviceCollection.AddKeyedResiliencePipelineWrapper(
             definitionName: ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME,
-            optionsAction: (options) =>
-            {
-                var exceptionsMustBeHandledCollection = new Type[]
-                    {
-                        typeof(SocketException),
-                        typeof(PostgresException),
-                        typeof(NpgsqlException),
-                        typeof(TimeoutException),
-                        typeof(InvalidOperationException)
-                    }.ToImmutableArray();
-
-                options.TimeoutOptions = new ResiliencePipelineTimeoutWrapperOptions()
-                {
-                    Timeout = TimeSpan.FromSeconds(20)
-                };
-
-                options.RetryOptions = new ResiliencePipelineRetryWrapperOptions()
-                {
-                    MaxRetryAttempts = 5,
-                    DelayBetweenRetriesInMiliseconds = 250,
-                    HandleExceptionsCollection = exceptionsMustBeHandledCollection
-                };
-
-                options.CircuitBreakerOptions = new ResiliencePipelineCircuitBreakerWrapperOptions()
-                {
-                    BreakDurationInSeconds = 5,
-                    MinimumThroughput = 50,
-                    FailureRatio = 0.10,
-                    HandleExceptionsCollection = exceptionsMustBeHandledCollection
-                };
-            });
+            options: databaseResiliencePolicyOptions);
 
         serviceCollection.AddScoped<IBaseRepository<Tenant>, TenantRepository>((serviceProvider)
             => new TenantRepository(
@@ -128,6 +96,16 @@ public static class DependencyInjection
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
                 dataContext: serviceProvider.GetRequiredService<DataContext>(),
                 resiliencePipelineWrapper: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(ENTITY_FRAMEWORK_CORE_REPOSITORIES_RESILIENCE_PIPELINE_NAME)));
+
+        #endregion
+
+        #region Apache Kafka Configuration
+
+        const string APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME = "APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER";
+
+        serviceCollection.AddKeyedResiliencePipelineWrapper(
+            definitionName: APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME,
+            options: apacheKafkaResilienceOptions);
 
         #endregion
     }

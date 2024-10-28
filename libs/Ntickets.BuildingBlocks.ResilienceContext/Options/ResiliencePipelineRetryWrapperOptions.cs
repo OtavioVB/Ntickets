@@ -4,7 +4,7 @@ namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
 
 public class ResiliencePipelineRetryWrapperOptions
 {
-    public ImmutableArray<Type> HandleExceptionsCollection { get; set; }
+    public string[] HandleExceptionsCollection { get; set; } = [];
     public int MaxRetryAttempts { get; set; }
     public int DelayBetweenRetriesInMiliseconds { get; set; }
 
@@ -12,7 +12,7 @@ public class ResiliencePipelineRetryWrapperOptions
     {
     }
 
-    public ResiliencePipelineRetryWrapperOptions(ImmutableArray<Type> handleExceptionsCollection, int maxRetryAttempts, int delayBetweenRetriesInSeconds)
+    public ResiliencePipelineRetryWrapperOptions(string[] handleExceptionsCollection, int maxRetryAttempts, int delayBetweenRetriesInSeconds)
     {
         HandleExceptionsCollection = handleExceptionsCollection;
         MaxRetryAttempts = maxRetryAttempts;

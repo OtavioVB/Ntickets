@@ -6,10 +6,13 @@ public class ResiliencePipelineTimeoutWrapperOptions
     {
     }
 
-    public ResiliencePipelineTimeoutWrapperOptions(TimeSpan timeout)
+    public ResiliencePipelineTimeoutWrapperOptions(int timeout)
     {
-        Timeout = timeout;
+        TimeoutInSeconds = timeout;
     }
 
-    public TimeSpan Timeout { get; set; }
+    public int TimeoutInSeconds { get; set; }
+
+    public TimeSpan GetTimeSpan()
+        => TimeSpan.FromSeconds(TimeoutInSeconds);
 }
