@@ -12,6 +12,7 @@ using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.BuildingBlocks.ResilienceContext;
@@ -49,7 +50,7 @@ public static class DependencyInjection
 
         serviceCollection.AddSingleton<IEventService<CreateTenantEvent>, CreateTenantEventService>((serviceProvider)
             => new CreateTenantEventService(
-                kafkaProducer: serviceProvider.GetRequiredService<IProducer<Null, string>>(),
+                producer: serviceProvider.GetRequiredService<IApacheKafkaProducer>(),
                 logger: serviceProvider.GetRequiredService<ILogger<CreateTenantEventService>>(),
                 resiliencePipeline: serviceProvider.GetRequiredKeyedService<IResiliencePipelineWrapper>(APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME),
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>()));
