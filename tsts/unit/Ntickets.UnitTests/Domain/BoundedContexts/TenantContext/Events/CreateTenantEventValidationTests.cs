@@ -1,4 +1,5 @@
-﻿using Ntickets.Domain.BoundedContexts.EventContext.Events;
+﻿using Ntickets.BuildingBlocks.AuditableInfoContext;
+using Ntickets.Domain.BoundedContexts.EventContext.Events;
 using Ntickets.Domain.BoundedContexts.TenantContext.Enumerators;
 
 namespace Ntickets.UnitTests.Domain.BoundedContexts.TenantContext.Events;
@@ -28,7 +29,9 @@ public sealed class CreateTenantEventValidationTests
             email: email,
             phone: phone,
             status: EnumTenantStatus.APPROVED,
-            lastModifiedAt: dateTime);
+            lastModifiedAt: dateTime,
+            eventName: "CREATE_TENANT_EVENT",
+            correlationId: Guid.NewGuid().ToString());
 
         // Assert
         Assert.Equal(tenantId, tenantEvent.TenantId);

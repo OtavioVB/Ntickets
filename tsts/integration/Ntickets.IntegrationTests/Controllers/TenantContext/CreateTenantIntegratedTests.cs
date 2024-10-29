@@ -58,6 +58,8 @@ public sealed class CreateTenantIntegratedTests : IClassFixture<CustomWebApplica
 
         var content = await httpResult.Content.ReadFromJsonAsync<CreateTenantSendloadOutput>();
 
+        var responseString = await httpResult.Content.ReadAsStringAsync();
+
         // Assert
         httpResult.StatusCode.Should().Be(HttpStatusCode.Created);
 

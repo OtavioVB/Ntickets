@@ -10,6 +10,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ntickets.Infrascructure.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers;
+using Moq;
+using Ntickets.Domain.BoundedContexts.EventContext.Events;
 
 namespace Ntickets.IntegrationTests;
 
@@ -43,16 +49,29 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             services.Remove(services.Single(service => service.ServiceType == typeof(DbContextOptions<DataContext>)));
 
+            var databaseResilienceOptions = builder.Configuration.GetRequiredSection("Infrascructure:Database:ResiliencePolicy").Get<ResiliencePipelineWrapperOptions>();
+            var apacheKafkaResilienceOptions = builder.Configuration.GetRequiredSection("Infrascructure:Messenger:ApacheKafka:ResiliencePolicy").Get<ResiliencePipelineWrapperOptions>();
+
             services.ApplyInfrascructureDependenciesConfiguration(
                 connectionString: builder.Configuration["Infrascructure:Database:PostgreeSQL:ConnectionString"]!,
-                rabbitMqConnectionUserName: builder.Configuration["Infrascructure:Messenger:RabbitMq:UserName"]!,
-                rabbitMqConnectionPassword: builder.Configuration["Infrascructure:Messenger:RabbitMq:Password"]!,
-                rabbitMqConnectionVirtualHost: builder.Configuration["Infrascructure:Messenger:RabbitMq:VirtualHost"]!,
-                rabbitMqConnectionHostName: builder.Configuration["Infrascructure:Messenger:RabbitMq:HostName"]!,
-                rabbitMqConnectionClientProviderName: builder.Configuration["ApplicationName"]!,
+                databaseResiliencePolicyOptions: databaseResilienceOptions!,
+                apacheKafkaResilienceOptions: apacheKafkaResilienceOptions!,
+                apacheKafkaServer: builder.Configuration["Infrascructure:Messenger:ApacheKafka:Host"]!,
                 configureDbContextInMemory: true);
 
-            services.ApplyApplicationDependenciesConfiguration();
+            services.AddSingleton<IApacheKafkaProducer>((serviceProvider) =>
+            {
+                var apacheKafkaProducer = new Mock<IApacheKafkaProducer>();
+
+                apacheKafkaProducer
+                    .Setup(p => p.PublishAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CreateTenantEvent>(), CancellationToken.None))
+                    .Returns(Task.CompletedTask);
+
+                return apacheKafkaProducer.Object;
+            });
+
+            services.ApplyApplicationDependenciesConfiguration(
+                discordServiceOptions: default);
         });
     }
 }
