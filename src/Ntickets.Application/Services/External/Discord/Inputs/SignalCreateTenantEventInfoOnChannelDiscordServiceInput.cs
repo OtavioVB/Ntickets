@@ -1,5 +1,4 @@
-﻿
-namespace Ntickets.Application.Services.External.Inputs;
+﻿namespace Ntickets.Application.Services.External.Discord.Inputs;
 
 public readonly struct SignalCreateTenantEventInfoOnChannelDiscordServiceInput
 {

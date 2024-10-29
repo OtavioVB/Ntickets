@@ -1,7 +1,7 @@
 ﻿using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 
-namespace Ntickets.Application.Services.Base.Inputs;
+namespace Ntickets.Application.Services.Internal.Base.Inputs;
 
 public interface IServiceInput
 {

@@ -1,6 +1,6 @@
-﻿using Ntickets.Application.Services.TenantContext.Inputs;
-using Ntickets.Application.Services.TenantContext.Interfaces;
-using Ntickets.Application.Services.TenantContext.Outputs;
+﻿using Ntickets.Application.Services.Internal.TenantContext.Inputs;
+using Ntickets.Application.Services.Internal.TenantContext.Interfaces;
+using Ntickets.Application.Services.Internal.TenantContext.Outputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Builders;
@@ -12,7 +12,7 @@ using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
 using System.Diagnostics;
 
-namespace Ntickets.Application.Services.TenantContext;
+namespace Ntickets.Application.Services.Internal.TenantContext;
 
 public sealed class TenantService : ITenantService
 {

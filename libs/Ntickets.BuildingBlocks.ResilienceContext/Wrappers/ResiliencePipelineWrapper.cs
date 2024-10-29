@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Ntickets.BuildingBlocks.ResilienceContext.Options;
+using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
 using Polly;
 using Polly.CircuitBreaker;
@@ -33,11 +33,7 @@ public sealed class ResiliencePipelineWrapper : IResiliencePipelineWrapper
             MaxRetryAttempts = options.RetryOptions.MaxRetryAttempts,
             Delay = options.RetryOptions.GetDelayBetweenRetries(),
             BackoffType = DelayBackoffType.Linear,
-            ShouldHandle = (exception) => new ValueTask<bool>(options.CircuitBreakerOptions.HandleExceptionsCollection.Any(p => p == exception.Outcome.Exception?.GetType().ToString())),
-            OnRetry = (context) => { 
-                logger.LogError($"\n\nTENTATIVA {context.AttemptNumber}\n\n"); 
-                return ValueTask.CompletedTask; 
-            } 
+            ShouldHandle = (exception) => new ValueTask<bool>(options.CircuitBreakerOptions.HandleExceptionsCollection.Any(p => p == exception.Outcome.Exception?.GetType().ToString()))
         };
 
         var circuitBreakerOptions = new CircuitBreakerStrategyOptions()

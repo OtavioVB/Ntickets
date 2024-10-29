@@ -1,4 +1,4 @@
-﻿namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
+﻿namespace Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 
 public class ResiliencePipelineWrapperOptions
 {
@@ -7,7 +7,7 @@ public class ResiliencePipelineWrapperOptions
     }
 
     public ResiliencePipelineWrapperOptions(
-        ResiliencePipelineTimeoutWrapperOptions timeoutOptions, 
+        ResiliencePipelineTimeoutWrapperOptions timeoutOptions,
         ResiliencePipelineCircuitBreakerWrapperOptions circuitBreakerOptions,
         ResiliencePipelineRetryWrapperOptions retryOptions)
     {

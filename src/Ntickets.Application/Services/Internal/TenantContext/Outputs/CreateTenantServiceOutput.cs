@@ -1,6 +1,6 @@
 ﻿using Ntickets.Domain.ValueObjects;
 
-namespace Ntickets.Application.Services.TenantContext.Outputs;
+namespace Ntickets.Application.Services.Internal.TenantContext.Outputs;
 
 public readonly struct CreateTenantServiceOutput
 {
@@ -14,8 +14,8 @@ public readonly struct CreateTenantServiceOutput
     public PhoneValueObject Phone { get; }
     public DateTimeValueObject LastModifiedAt { get; }
 
-    private CreateTenantServiceOutput(IdValueObject tenantId, DateTimeValueObject createdAt, TenantStatusValueObject status, 
-        FantasyNameValueObject fantasyName, LegalNameValueObject legalName, DocumentValueObject document, EmailValueObject email, 
+    private CreateTenantServiceOutput(IdValueObject tenantId, DateTimeValueObject createdAt, TenantStatusValueObject status,
+        FantasyNameValueObject fantasyName, LegalNameValueObject legalName, DocumentValueObject document, EmailValueObject email,
         PhoneValueObject phone, DateTimeValueObject lastModifiedAt)
     {
         TenantId = tenantId;

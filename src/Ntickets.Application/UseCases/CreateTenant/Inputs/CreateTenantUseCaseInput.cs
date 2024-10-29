@@ -1,7 +1,4 @@
-﻿using Ntickets.Application.Services.Base.Inputs;
-using Ntickets.BuildingBlocks.MethodResultsContext;
-using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
-using Ntickets.Domain.ValueObjects;
+﻿using Ntickets.Domain.ValueObjects;
 
 namespace Ntickets.Application.UseCases.CreateTenant.Inputs;
 

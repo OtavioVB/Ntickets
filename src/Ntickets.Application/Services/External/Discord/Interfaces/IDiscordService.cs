@@ -1,7 +1,7 @@
-﻿using Ntickets.Application.Services.External.Inputs;
+﻿using Ntickets.Application.Services.External.Discord.Inputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 
-namespace Ntickets.Application.Services.External.Interfaces;
+namespace Ntickets.Application.Services.External.Discord.Interfaces;
 
 public interface IDiscordService
 {

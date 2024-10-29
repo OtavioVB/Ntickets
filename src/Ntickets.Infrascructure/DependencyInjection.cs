@@ -14,11 +14,14 @@ using Polly.CircuitBreaker;
 using Polly.Retry;
 using Polly.Timeout;
 using Ntickets.BuildingBlocks.ResilienceContext;
-using Ntickets.BuildingBlocks.ResilienceContext.Options;
 using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
 using System.Net.Sockets;
 using System.Collections.Immutable;
 using Npgsql;
+using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
+using Confluent.Kafka;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers;
 
 namespace Ntickets.Infrascructure;
 
@@ -100,6 +103,14 @@ public static class DependencyInjection
         #endregion
 
         #region Apache Kafka Configuration
+
+        var configuration = new ProducerConfig()
+        {
+            BootstrapServers = apacheKafkaServer
+        };
+
+        serviceCollection.AddSingleton<IApacheKafkaProducer, ApacheKafkaProducer>((serviceProvider)
+            => new ApacheKafkaProducer(configuration));
 
         const string APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME = "APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER";
 

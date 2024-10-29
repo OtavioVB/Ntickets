@@ -38,12 +38,6 @@ Esse é o projeto de estudos denominado como **Ntickets** na qual tem como objeti
 - [Grafana k6](https://k6.io/docs/)
 - [SpecFlow](https://docs.specflow.org/en/latest/)
 
-## Testes de Carga
-
-| Caso de Uso | segs | reqs | req/s | med time req | approved |
-| ----------- | ---- | ---- | ----- | ------------ | -------- |
-| Criação de Contratante | 120s | 14271 | 118.92 | 340ms | :checked: |
-
 ## Engenheiro Responsável pelo Desenvolvimento
 - [Otávio Carmanini](https://www.linkedin.com/in/otaviovillasboassimoncinicarmanini/)
 

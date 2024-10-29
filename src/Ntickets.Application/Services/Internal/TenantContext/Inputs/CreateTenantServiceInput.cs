@@ -1,9 +1,9 @@
-﻿using Ntickets.Application.Services.Base.Inputs;
+﻿using Ntickets.Application.Services.Internal.Base.Inputs;
 using Ntickets.BuildingBlocks.MethodResultsContext;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 using Ntickets.Domain.ValueObjects;
 
-namespace Ntickets.Application.Services.TenantContext.Inputs;
+namespace Ntickets.Application.Services.Internal.TenantContext.Inputs;
 
 public readonly struct CreateTenantServiceInput : IServiceInput
 {

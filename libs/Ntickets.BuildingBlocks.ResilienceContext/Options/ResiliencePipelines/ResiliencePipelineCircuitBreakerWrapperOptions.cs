@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
+namespace Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 
 public class ResiliencePipelineCircuitBreakerWrapperOptions
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
+namespace Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 
 public class ResiliencePipelineRetryWrapperOptions
 {
@@ -20,5 +20,5 @@ public class ResiliencePipelineRetryWrapperOptions
     }
 
     public TimeSpan GetDelayBetweenRetries()
-        => TimeSpan.FromMilliseconds(DelayBetweenRetriesInMiliseconds);  
+        => TimeSpan.FromMilliseconds(DelayBetweenRetriesInMiliseconds);
 }

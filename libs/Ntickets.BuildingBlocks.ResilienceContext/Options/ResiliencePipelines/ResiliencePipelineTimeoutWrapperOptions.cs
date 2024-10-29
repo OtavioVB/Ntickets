@@ -1,4 +1,4 @@
-﻿namespace Ntickets.BuildingBlocks.ResilienceContext.Options;
+﻿namespace Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 
 public class ResiliencePipelineTimeoutWrapperOptions
 {

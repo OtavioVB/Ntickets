@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Ntickets.Application.Events.Base;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
@@ -13,16 +14,16 @@ namespace Ntickets.Application.Events;
 public sealed class CreateTenantEventService : EventBaseService<CreateTenantEvent>
 {
     private readonly ILogger<CreateTenantEventService> _logger;
-    private readonly IProducer<Null, string> _kafkaProducer;
+    private readonly IApacheKafkaProducer _producer;
     private readonly IResiliencePipelineWrapper _resiliencePipeline;
 
     public CreateTenantEventService(
-        IProducer<Null, string> kafkaProducer,
+        IApacheKafkaProducer producer,
         ILogger<CreateTenantEventService> logger,
         IResiliencePipelineWrapper resiliencePipeline,
         ITraceManager traceManager) : base(traceManager)
     {
-        _kafkaProducer = kafkaProducer;
+        _producer = producer;
         _logger = logger;
         _resiliencePipeline = resiliencePipeline;
     }
@@ -60,12 +61,10 @@ public sealed class CreateTenantEventService : EventBaseService<CreateTenantEven
 
     private Task ProduceResilientEventAsync(CreateTenantEvent message, CancellationToken cancellationToken)
         => _resiliencePipeline.GetResiliencePipeline().ExecuteAsync(async (input, cancellationToken) =>
-            await _kafkaProducer.ProduceAsync(
-                topic: EventName,
-                message: new Message<Null, string>()
-                {
-                    Value = JsonSerializer.Serialize(input)
-                },
+            await _producer.PublishAsync(
+                topicName: EventName,
+                messageId: message.TenantId,
+                message: message,
                 cancellationToken: cancellationToken),
             state: message,
             cancellationToken: cancellationToken).AsTask();

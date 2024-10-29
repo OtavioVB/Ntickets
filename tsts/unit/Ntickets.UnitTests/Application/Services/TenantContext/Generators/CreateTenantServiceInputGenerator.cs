@@ -1,4 +1,4 @@
-﻿using Ntickets.Application.Services.TenantContext.Inputs;
+﻿using Ntickets.Application.Services.Internal.TenantContext.Inputs;
 
 namespace Ntickets.UnitTests.Application.Services.TenantContext.Generators;
 

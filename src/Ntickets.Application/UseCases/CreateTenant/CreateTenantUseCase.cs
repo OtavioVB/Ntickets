@@ -1,8 +1,8 @@
 ﻿using Microsoft.FeatureManagement;
 using Ntickets.Application.Events;
 using Ntickets.Application.Events.Base.Interfaces;
-using Ntickets.Application.Services.TenantContext.Inputs;
-using Ntickets.Application.Services.TenantContext.Interfaces;
+using Ntickets.Application.Services.Internal.TenantContext.Inputs;
+using Ntickets.Application.Services.Internal.TenantContext.Interfaces;
 using Ntickets.Application.UseCases.Base;
 using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;

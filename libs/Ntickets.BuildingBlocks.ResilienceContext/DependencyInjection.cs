@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Ntickets.BuildingBlocks.ResilienceContext.Options;
+using Ntickets.BuildingBlocks.ResilienceContext.Options.HttpClientRequests;
+using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 using Ntickets.BuildingBlocks.ResilienceContext.Wrappers;
 using Ntickets.BuildingBlocks.ResilienceContext.Wrappers.Interfaces;
+using Polly;
+using Polly.Retry;
 
 namespace Ntickets.BuildingBlocks.ResilienceContext;
 
