@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Ntickets.Application.Events;
 using Ntickets.Application.Events.Base.Interfaces;
+using Ntickets.Application.Services.BackgroundServices;
 using Ntickets.Application.Services.External.Discord;
 using Ntickets.Application.Services.External.Discord.Interfaces;
 using Ntickets.Application.Services.External.Discord.Options;
@@ -12,6 +13,9 @@ using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.CreateTenant;
 using Ntickets.Application.UseCases.CreateTenant.Inputs;
 using Ntickets.Application.UseCases.CreateTenant.Outputs;
+using Ntickets.Application.UseCases.SignalTenantCreationInfo;
+using Ntickets.Application.UseCases.SignalTenantCreationInfo.Inputs;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Consumers.Interfaces;
 using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Metrics.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
@@ -60,6 +64,18 @@ public static class DependencyInjection
         #region Use Cases Dependencies Configuration
 
         serviceCollection.AddScoped<IUseCase<CreateTenantUseCaseInput, CreateTenantUseCaseOutput>, CreateTenantUseCase>();
+        serviceCollection.AddScoped<IUseCase<SignalTenantCreationInfoUseCaseInput>, SignalTenantCreationInfoUseCase>();
+
+        #endregion
+
+        #region Background Services
+
+        const string CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN = nameof(CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN);
+        serviceCollection.AddHostedService<CreateTenantEventConsumer>((serviceProvider)
+            => new CreateTenantEventConsumer(
+                consumer: serviceProvider.GetRequiredKeyedService<IApacheKafkaConsumer>(CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN),
+                serviceProvider: serviceProvider,
+                logger: serviceProvider.GetRequiredService<ILogger<CreateTenantEventConsumer>>()));
 
         #endregion
 

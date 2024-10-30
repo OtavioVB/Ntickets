@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Ntickets.Application.UseCases.Base.Interfaces;
+using Ntickets.Application.UseCases.SignalTenantCreationInfo;
 using Ntickets.Application.UseCases.SignalTenantCreationInfo.Inputs;
 using Ntickets.BuildingBlocks.ApacheKafkaContext.Consumers.Interfaces;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
@@ -52,6 +53,16 @@ public sealed class CreateTenantEventConsumer : BackgroundService
                         auditableInfo: AuditableInfoValueObject.Factory(
                             correlationId: @event.CorrelationId),
                         cancellationToken: stoppingToken);
+
+                    _logger.LogInformation(
+                        message: "[{Type}][{Timestamp}][{TopicName}][{UseCase}] Event = {Event}, IsSuccess = {IsSuccess}, Output = {Output}",
+                        nameof(CreateTenantEventConsumer),
+                        DateTime.UtcNow,
+                        TOPIC_NAME,
+                        nameof(SignalTenantCreationInfoUseCase),
+                        message.Message.Value,
+                        useCaseResult.IsSuccess,
+                        JsonSerializer.Serialize(useCaseResult.Notifications));
                 }
             }
             catch (Exception ex)

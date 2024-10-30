@@ -6,6 +6,7 @@ using Ntickets.Application.UseCases.Base.Interfaces;
 using Ntickets.Application.UseCases.SignalTenantCreationInfo.Inputs;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
 using Ntickets.BuildingBlocks.MethodResultsContext;
+using Ntickets.BuildingBlocks.NotificationContext.Builders;
 using Ntickets.BuildingBlocks.NotificationContext.Interfaces;
 using Ntickets.BuildingBlocks.ObservabilityContext.Traces.Interfaces;
 using System.Diagnostics;
@@ -38,6 +39,21 @@ public sealed class SignalTenantCreationInfoUseCase : UseCaseFeatureManagedBase,
             input: input,
             handler: async (input, auditableInfo, activity, cancellationToken) =>
             {
+                if (!await CanHandleFeatureAsync())
+                {
+                    const string SIGNAL_TENANT_CREATION_INFO_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_CODE = "SIGNAL_TENANT_CREATION_INFO_FEATURE_FLAG_IS_NOT_ENABLED";
+                    const string SIGNAL_TENANT_CREATION_INFO_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_MESSAGE = "O processamento da notificação do evento de criação do contratante não está habilitado para execução.";
+
+                    return MethodResult<INotification>.FactoryError(
+                        notifications: [
+                            NotificationBuilder.BuildErrorNotification (
+                                code: SIGNAL_TENANT_CREATION_INFO_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_CODE,
+                                message: SIGNAL_TENANT_CREATION_INFO_FEATURE_FLAG_IS_NOT_ENABLED_NOTIFICATION_MESSAGE)]);
+                }
+
+                const string SIGNAL_TENANT_CREATION_INFO_SUCCESS_NOTIFICATION_CODE = "SIGNAL_TENANT_CREATION_INFO_SUCCESS";
+                const string SIGNAL_TENANT_CREATION_INFO_SUCCESS_NOTIFICATION_MESSAGE = "O processamento da notificação do evento de criação do contratante foram realizadas com sucesso.";
+
                 _ = _discordService.SignalCreateTenantEventInfoOnChannelAsync(
                     input: SignalCreateTenantEventInfoOnChannelDiscordServiceInput.Factory(
                         tenantId: input.Event.TenantId,
@@ -48,7 +64,11 @@ public sealed class SignalTenantCreationInfoUseCase : UseCaseFeatureManagedBase,
                     auditableInfo: auditableInfo,
                     cancellationToken: cancellationToken);
 
-                return MethodResult<INotification>.FactorySuccess();
+                return MethodResult<INotification>.FactorySuccess(
+                    notifications: [
+                        NotificationBuilder.BuildSuccessNotification(
+                            code: SIGNAL_TENANT_CREATION_INFO_SUCCESS_NOTIFICATION_CODE,
+                            message: SIGNAL_TENANT_CREATION_INFO_SUCCESS_NOTIFICATION_MESSAGE)]);
             },
             auditableInfo: auditableInfo,
             cancellationToken: cancellationToken);
