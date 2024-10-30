@@ -22,6 +22,8 @@ using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
 using Confluent.Kafka;
 using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers.Interfaces;
 using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Consumers.Interfaces;
+using Ntickets.BuildingBlocks.ApacheKafkaContext.Consumers;
 
 namespace Ntickets.Infrascructure;
 
@@ -108,12 +110,21 @@ public static class DependencyInjection
         {
             BootstrapServers = apacheKafkaServer
         };
-
         serviceCollection.AddSingleton<IApacheKafkaProducer, ApacheKafkaProducer>((serviceProvider)
             => new ApacheKafkaProducer(configuration));
 
-        const string APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME = "APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER";
+        const string CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN = nameof(CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN);
+        var consumerConfiguration = new ConsumerConfig()
+        {
+            BootstrapServers = apacheKafkaServer,
+            GroupId = CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN,
+            AutoOffsetReset = AutoOffsetReset.Earliest
+        };
+        serviceCollection.AddKeyedSingleton<IApacheKafkaConsumer, ApacheKafkaConsumer>(
+            serviceKey: CREATE_TENANT_EVENT_GROUP_CONSUMER_ORIGIN,
+            (serviceProvider, context) => new ApacheKafkaConsumer(consumerConfiguration));
 
+        const string APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME = "APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER";
         serviceCollection.AddKeyedResiliencePipelineWrapper(
             definitionName: APACHE_KAFKA_RESILIENCE_PIPELINE_WRAPPER_DEFINITION_NAME,
             options: apacheKafkaResilienceOptions);

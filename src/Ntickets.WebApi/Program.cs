@@ -4,6 +4,7 @@ using Ntickets.BuildingBlocks.ObservabilityContext;
 using Microsoft.OpenApi.Models;
 using Microsoft.FeatureManagement;
 using Ntickets.BuildingBlocks.ResilienceContext.Options.ResiliencePipelines;
+using Ntickets.Application.Services.External.Discord.Options;
 
 namespace Ntickets.WebApi;
 
@@ -49,8 +50,10 @@ public sealed class Program
             apacheKafkaResilienceOptions: apacheKafkaResilienceOptions!,
             apacheKafkaServer: builder.Configuration["Infrascructure:Messenger:ApacheKafka:Host"]!);
 
+        var discordServiceOptions = builder.Configuration.GetRequiredSection("Application:Services:Discord").Get<DiscordServiceOptions>();
+
         builder.Services.ApplyApplicationDependenciesConfiguration(
-            discordServiceOptions: default);
+            discordServiceOptions: discordServiceOptions!);
 
         var app = builder.Build();
 

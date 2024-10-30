@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Ntickets.BuildingBlocks.ApacheKafkaContext.Producers;
 using Moq;
 using Ntickets.Domain.BoundedContexts.EventContext.Events;
+using Ntickets.Application.Services.External.Discord.Options;
 
 namespace Ntickets.IntegrationTests;
 
@@ -70,8 +71,10 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 return apacheKafkaProducer.Object;
             });
 
+            var discordServiceOptions = builder.Configuration.GetRequiredSection("Application:Services:Discord").Get<DiscordServiceOptions>();
+
             services.ApplyApplicationDependenciesConfiguration(
-                discordServiceOptions: default);
+                discordServiceOptions: discordServiceOptions!);
         });
     }
 }
