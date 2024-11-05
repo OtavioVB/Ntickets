@@ -73,6 +73,8 @@ services:
     restart: unless-stopped
     ports:
       - 48710:3000
+    volumes:
+      - granafa:/var/lib/grafana
     depends_on:
       - opentelemetry
       - prometheus

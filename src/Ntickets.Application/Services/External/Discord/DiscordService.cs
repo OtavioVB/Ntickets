@@ -15,16 +15,13 @@ namespace Ntickets.Application.Services.External.Discord;
 
 public sealed class DiscordService : IDiscordService
 {
-    private readonly IMetricManager _metricManager;
     private readonly ITraceManager _traceManager;
     private readonly DiscordServiceOptions _options;
 
     public DiscordService(
-        IMetricManager metricManager, 
         ITraceManager traceManager, 
         DiscordServiceOptions options)
     {
-        _metricManager = metricManager;
         _traceManager = traceManager;
         _options = options;
     }
@@ -68,7 +65,7 @@ public sealed class DiscordService : IDiscordService
                 using var httpClient = HttpClientFactory.Create();
                 httpClient.BaseAddress = new Uri(_options.Host);
 
-                var response = await httpClient.SendAsync(
+                await httpClient.SendAsync(
                     request: request,
                     cancellationToken: cancellationToken);
 

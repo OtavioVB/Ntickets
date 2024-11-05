@@ -78,7 +78,7 @@ public sealed class CreateTenantEventConsumer : BackgroundService
             {
                 _consumer.Close();
             }
-        });
+        }, stoppingToken);
 
         return Task.CompletedTask;
     }
