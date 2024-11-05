@@ -38,9 +38,9 @@ public static class DependencyInjection
 
         serviceCollection.AddSingleton<IDiscordService, DiscordService>((serviceProvider)
             => new DiscordService(
-                metricManager: serviceProvider.GetRequiredService<IMetricManager>(),
                 traceManager: serviceProvider.GetRequiredService<ITraceManager>(),
-                options: discordServiceOptions));
+                options: discordServiceOptions,
+                logger: serviceProvider.GetRequiredService<ILogger<DiscordService>>()));
 
         #endregion
 

@@ -14,9 +14,4 @@ public interface ITenantService
         CreateTenantServiceInput input,
         AuditableInfoValueObject auditableInfo,
         CancellationToken cancellationToken);
-
-    public Task<MethodResult<INotification>> StoreTenantCreationNotificationServiceAsync(
-        CreateTenantEvent @event,
-        AuditableInfoValueObject auditableInfo,
-        CancellationToken cancellationToken);
 }

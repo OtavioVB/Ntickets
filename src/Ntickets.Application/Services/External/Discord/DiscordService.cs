@@ -1,4 +1,5 @@
-﻿using Ntickets.Application.Services.External.Discord.Inputs;
+﻿using Microsoft.Extensions.Logging;
+using Ntickets.Application.Services.External.Discord.Inputs;
 using Ntickets.Application.Services.External.Discord.Interfaces;
 using Ntickets.Application.Services.External.Discord.Options;
 using Ntickets.BuildingBlocks.AuditableInfoContext;
@@ -17,13 +18,16 @@ public sealed class DiscordService : IDiscordService
 {
     private readonly ITraceManager _traceManager;
     private readonly DiscordServiceOptions _options;
+    private readonly ILogger<DiscordService> _logger;
 
     public DiscordService(
         ITraceManager traceManager, 
-        DiscordServiceOptions options)
+        DiscordServiceOptions options,
+        ILogger<DiscordService> logger)
     {
         _traceManager = traceManager;
         _options = options;
+        _logger = logger;
     }
 
     public Task SignalCreateTenantEventInfoOnChannelAsync(
@@ -65,9 +69,37 @@ public sealed class DiscordService : IDiscordService
                 using var httpClient = HttpClientFactory.Create();
                 httpClient.BaseAddress = new Uri(_options.Host);
 
-                await httpClient.SendAsync(
+                var response = await httpClient.SendAsync(
                     request: request,
                     cancellationToken: cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync(
+                        cancellationToken: cancellationToken);
+
+                    _logger.LogError(
+                        message: "[{Type}][{Timestamp}][StatusCode = {StatusCodeNumber}{StatusCode}][Host = {Host}][Endpoint = {Endpoint}][Response = {Response}] The request that has sent to discord service has not got success.",
+                        typeof(DiscordService),
+                        DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        (int)response.StatusCode,
+                        response.StatusCode,
+                        _options.Host,
+                        _options.CreateTenantEventWebhookPath,
+                        result);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                        message: "[{Type}][{Timestamp}][StatusCode = {StatusCodeNumber}{StatusCode}][Host = {Host}][Endpoint = {Endpoint}][Request = {Request}] The request that has sent to discord service has got success.",
+                        typeof(DiscordService),
+                        DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        (int)response.StatusCode,
+                        response.StatusCode,
+                        _options.Host,
+                        _options.CreateTenantEventWebhookPath,
+                        content);
+                }
 
                 return Task.CompletedTask;
             },
