@@ -41,4 +41,4 @@ Esse é o projeto de estudos denominado como **Ntickets** na qual tem como objeti
 ## Engenheiro Responsável pelo Desenvolvimento
 - [Otávio Carmanini](https://www.linkedin.com/in/otaviovillasboassimoncinicarmanini/)
 
-[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=OtavioVB_OVB.Demos.PortfolioInvestment)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=OtavioVB_Ntickets)
