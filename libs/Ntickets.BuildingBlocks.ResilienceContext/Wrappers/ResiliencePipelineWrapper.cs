@@ -21,12 +21,9 @@ public sealed class ResiliencePipelineWrapper : IResiliencePipelineWrapper
 
     public static ResiliencePipelineWrapper Build(
         string resiliencePipelineDefinitionName,
-        IServiceProvider serviceProvider,
         ResiliencePipelineWrapperOptions options)
     {
         var resiliencePipelineBuilder = new ResiliencePipelineBuilder();
-
-        var logger = serviceProvider.GetRequiredService<ILogger<ResiliencePipelineWrapper>>();
 
         var retryOptions = new RetryStrategyOptions()
         {
@@ -47,16 +44,6 @@ public sealed class ResiliencePipelineWrapper : IResiliencePipelineWrapper
         var timeoutOptions = new TimeoutStrategyOptions()
         {
             Timeout = options.TimeoutOptions.GetTimeSpan(),
-            OnTimeout = (context) =>
-            {
-                logger.LogError(
-                    message: "[{DefinitionName}][{Type}][DateTime = {DateTime}] The execution process has got timeout.",
-                    resiliencePipelineDefinitionName,
-                    typeof(ResiliencePipelineWrapper),
-                    DateTime.UtcNow);
-
-                return ValueTask.CompletedTask;
-            }
         };
 
         resiliencePipelineBuilder

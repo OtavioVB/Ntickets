@@ -24,7 +24,6 @@ public static class DependencyInjection
             implementationFactory: (serviceProvider, serviceKey)
                 => ResiliencePipelineWrapper.Build(
                     resiliencePipelineDefinitionName: definitionName,
-                    serviceProvider: serviceProvider,
                     options: options));
 
         return serviceCollection;
@@ -40,7 +39,6 @@ public static class DependencyInjection
             implementationFactory: (serviceProvider, serviceKey)
                 => ResiliencePipelineWrapper.Build(
                     resiliencePipelineDefinitionName: definitionName,
-                    serviceProvider: serviceProvider,
                     options: options));
 
         return serviceCollection;
