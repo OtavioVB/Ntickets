@@ -114,6 +114,45 @@ public sealed class CreateTenantUseCaseValidationTests
     }
 
     [Fact]
+    public async Task Given_Valid_Input_And_Tenant_Service_Error_Should_Return_Output_As_Expected()
+    {
+        // Arrange 
+        var tenantServiceOutput = MethodResult<INotification, CreateTenantServiceOutput>.FactorySuccess(
+            notifications: [NotificationBuilder.BuildErrorNotification(
+                code: "NOTIFICATION_CODE",
+                message: "NOTIFICATION_MESSAGE")],
+            output: CreateTenantServiceOutputGenerator.Generate());
+        var tenantServiceMock = new Mock<ITenantService>();
+        tenantServiceMock.Setup(p => p.CreateTenantServiceAsync(
+            It.IsAny<CreateTenantServiceInput>(),
+            It.IsAny<AuditableInfoValueObject>(),
+            It.IsAny<CancellationToken>())).Returns(() => Task.FromResult(tenantServiceOutput));
+
+        var featureManagerMock = new Mock<IFeatureManager>();
+        featureManagerMock.Setup(p => p.IsEnabledAsync(It.IsAny<string>())).Returns(Task.FromResult(true));
+        var eventServiceMock = new Mock<IEventService<CreateTenantEvent>>();
+
+        var useCase = new CreateTenantUseCase(
+            traceManager: FakerTraceManager.CreateInstance(),
+            unitOfWork: FakerUnitOfWork.CreateInstance(),
+            tenantService: tenantServiceMock.Object,
+            metricManager: FakerMetricManager.CreateInstance(),
+            featureManager: featureManagerMock.Object,
+            eventService: eventServiceMock.Object);
+
+        // Act
+        var useCaseResult = await useCase.ExecuteUseCaseAsync(
+            input: CreateDefault(),
+            auditableInfo: AuditableInfoValueObject.Factory(Guid.NewGuid().ToString()),
+            cancellationToken: CancellationToken.None);
+
+        // Assert
+        Assert.True(useCaseResult.IsSuccess);
+        Assert.Equal(tenantServiceOutput.Notifications.Length, useCaseResult.Notifications.Length);
+        Assert.Equal(tenantServiceOutput.Notifications, useCaseResult.Notifications);
+    }
+
+    [Fact]
     public async Task Given_Valid_Input_And_Tenant_Service_Success_Should_Increment_On_Use_Case_Metrics()
     {
         // Arrange 
