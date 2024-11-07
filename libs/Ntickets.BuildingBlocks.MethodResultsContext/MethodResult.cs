@@ -100,4 +100,9 @@ public readonly struct MethodResult<TNotification, TOutput>
 
         return new MethodResult<TNotification, TOutput>(methodResult.Type, methodResult.Notifications, output);
     }
+
+    public static object FactorySuccess(object notifications, object output)
+    {
+        throw new NotImplementedException();
+    }
 }
