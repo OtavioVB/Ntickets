@@ -136,7 +136,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: pwsh
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"OtavioVB_Ntickets" /o:"otaviovb-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.coverage.exclusions="app/**,libs/**,tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,**/DependencyInjection.cs,**/appsettings.json,functions/**,**/UseCases/**,**/Program.cs" /d:sonar.exclusions="app/**,libs/**,tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,benchs/**,**/DependencyInjection.cs,functions/**,**/Program.cs,**/appsettings.json"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"OtavioVB_Ntickets" /o:"otaviovb-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.coverage.exclusions="app/**,libs/**,tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,**/DependencyInjection.cs,**/appsettings.json,functions/**,**/Program.cs" /d:sonar.exclusions="app/**,libs/**,tsts/**,**/Migrations/**,**/Controllers/**,**/Mappings/**,**/EntityFrameworkCore/**,**/Dockerfile,benchs/**,**/DependencyInjection.cs,functions/**,**/Program.cs,**/appsettings.json"
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover ./tsts/unit/Ntickets.UnitTests/Ntickets.UnitTests.csproj
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
