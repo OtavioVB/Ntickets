@@ -6,11 +6,11 @@ using Ntickets.Domain.BoundedContexts.TenantContext.DataTransferObject;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Base.Interfaces;
 using Ntickets.Infrascructure.EntityFrameworkCore.Repositories.Extensions;
 using Ntickets.Infrascructure.EntityFrameworkCore.UnitOfWork.Interfaces;
-using Ntickets.UnitTests.Application.Services.TenantContext.Generators;
+using Ntickets.UnitTests.Application.Services.Internal.TenantContext.Generators;
 using Ntickets.UnitTests.Common;
 using System.Diagnostics;
 
-namespace Ntickets.UnitTests.Application.Services.TenantContext;
+namespace Ntickets.UnitTests.Application.Services.Internal.TenantContext;
 
 public sealed class TenantServiceValidationTests
 {

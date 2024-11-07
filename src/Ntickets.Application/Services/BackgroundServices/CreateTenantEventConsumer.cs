@@ -13,6 +13,7 @@ namespace Ntickets.Application.Services.BackgroundServices;
 
 public sealed class CreateTenantEventConsumer : BackgroundService
 {
+    private readonly bool _consumerTest;
     private readonly IApacheKafkaConsumer _consumer;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<CreateTenantEventConsumer> _logger;
@@ -20,11 +21,13 @@ public sealed class CreateTenantEventConsumer : BackgroundService
     public CreateTenantEventConsumer(
         IApacheKafkaConsumer consumer, 
         IServiceProvider serviceProvider,
-        ILogger<CreateTenantEventConsumer> logger)
+        ILogger<CreateTenantEventConsumer> logger,
+        bool consumerTest = false)
     {
         _consumer = consumer;
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _consumerTest = consumerTest;
     }
 
     private const string TOPIC_NAME = "CREATE_TENANT_EVENT";
@@ -63,6 +66,9 @@ public sealed class CreateTenantEventConsumer : BackgroundService
                         message.Message.Value,
                         useCaseResult.IsSuccess,
                         JsonSerializer.Serialize(useCaseResult.Notifications));
+
+                    if (_consumerTest)
+                        break;
                 }
             }
             catch (Exception ex)
@@ -70,7 +76,7 @@ public sealed class CreateTenantEventConsumer : BackgroundService
                 _logger.LogCritical(
                     exception: ex,
                     message: "[{Type}][{Timestamp}][{TopicName}] The consumer could not be executed, because an unhandled exception has throwed.",
-                    typeof(CreateTenantEventConsumer),
+                    nameof(CreateTenantEventConsumer),
                     DateTime.UtcNow,
                     TOPIC_NAME);
             }
